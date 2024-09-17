@@ -1,0 +1,40 @@
+---
+title: "Advanced Panel Data Anlysis"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    number_sections: true
+author:
+  - name: Tobias Rüttenauer
+    orcid: 	0000-0001-5747-9735
+    email: t.ruttenauer@ucl.ac.uk
+    url: https://ruettenauer.github.io/
+    affiliations:
+      - name: UCL Social Research Institute
+        address: University College London
+        city: London WC1H 0AL
+---
+
+
+# Course Description
+
+This course provides a hands-on introduction to advanced panel data methods. It briefly covers the basic concepts of random effects (RE) and fixed effects (FE) estimators. Moving beyond the fundamentals, the workshop offers insights into recent developments and advances in panel data methods, such as the inclusion of individual or group-specific slopes and the identification of time-varying treatment effects via impact functions and novel Diff-in-Diff estimators.
+
+# Course Outline
+
+Intro Panel Data
+
+Panel Data Estimators 1
+
+- 	Variance Decomposition
+- 	Fixed Effects
+-   Difference in Differences
+-   Random Effects
+
+Panel Data Estimators 2 
+
+-  Dynamic treatment effects
+-  Dynamic Diff-in-Diff
+-  Fixed Effects Individual Slopes

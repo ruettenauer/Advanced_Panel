@@ -1,0 +1,978 @@
+---
+title: "Panel Data Estimators 2"
+author: "Tobias Ruttenauer"
+format: 
+  revealjs:
+    scrollable: true
+    footer: <[Home](/index.html)> 
+    
+---
+
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\plim}{\operatornamewithlimits{plim}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\Prob}{\mathrm{Prob}}
+\newcommand{\bm}[1]{\boldsymbol{\mathbf{#1}}}
+
+```{r setup, cache=FALSE, include=FALSE}
+# options(htmltools.dir.version = FALSE)
+# library(knitr)
+# opts_chunk$set(
+#   fig.align="center",  
+#   fig.height=4, #fig.width=6,
+#   # out.width="748px", #out.length="520.75px",
+#   dpi=300, #fig.path='Figs/',
+#   cache=T#, echo=F, warning=F, message=F
+#   )
+library(tidyverse)
+library(hrbrthemes)
+library(fontawesome)
+library(plm)
+library(lfe)
+library(texreg)
+library(viridis)
+library(did)
+```
+
+
+# Dynamic treatment effects
+
+
+## The shape of treatment effects
+
+![@Ruttenauer.2021b](fig/Demography.png){width=75%}
+
+
+## The shape of treatment effects
+
+![@Zoch.2023a](fig/housework.jpg){width=75%}
+
+
+## The shape of treatment effects
+
+![@Clark.2013](fig/lifecourse-events.PNG){width=75%}
+
+
+
+
+## Event study design
+
+![Various impact functions for event study designs from [Brüderl/Ludwig 2019 teaching materials](https://www.ls3.soziologie.uni-muenchen.de/studium-lehre/archiv/teaching-marterials/panel-analysis_april-2019.pdf). See also @Ludwig.2021](fig/Impact-function.PNG)
+
+
+## Event study design
+
+For many research questions, treatment effects are likely to follow a temporal pattern rather than being uniform.
+
+If there is a binary treatment indicator (e.g. marriage, childbirth), we can use impact functions (or count functions) around the onset of the treatment in twoway FE to investigate its temporal patterns [@Ludwig.2021].
+
+
+## Example - Marriage and wage
+
+```{r}
+library(feisr)
+data("mwp", package = "feisr")
+head(mwp)
+```
+
+
+## Dummy impact function
+
+```{r}
+#| eval: false
+#| code-line-numbers: "1-10"
+# Order
+mwp <- mwp[order(mwp$id, mwp$year),]
+
+# Count since treatment by id
+mwp$Treat_count <- ave(
+  mwp$marry,
+  mwp$id,
+  FUN = function(x)
+    cumsum(x)
+)
+
+# First treatment instance & distribute
+mwp$Treat_first <- ifelse(mwp$Treat_count == 1, 
+                          mwp$year, 
+                          0)
+mwp$Treat_first <- ave(mwp$Treat_first,
+                       mwp$id,
+                       FUN = max)
+
+```
+
+
+## Dummy impact function
+
+```{r}
+#| eval: true
+#| code-line-numbers: "12-18"
+# Order
+mwp <- mwp[order(mwp$id, mwp$year),]
+
+# Count since treatment by id
+mwp$Treat_count <- ave(
+  mwp$marry,
+  mwp$id,
+  FUN = function(x)
+    cumsum(x)
+)
+
+# First treatment instance & distribute
+mwp$Treat_first <- ifelse(mwp$Treat_count == 1, 
+                          mwp$year, 
+                          0)
+mwp$Treat_first <- ave(mwp$Treat_first,
+                       mwp$id,
+                       FUN = max)
+```
+
+
+
+
+## Dummy impact function
+
+```{r}
+#| eval: false
+#| code-line-numbers: "1-2"
+# Create event time indicator
+mwp$time_to_treatment <- mwp$year - mwp$Treat_first
+
+# Define reference periods (use minus 2 to allow for anticipation in -1)
+# control <- c(-2, min(mwp$time_to_treatment)) 
+control <- c(-2)
+
+mwp$time_to_treatment <-
+  ifelse(
+    mwp$time_to_treatment %in% control | mwp$Treat_first == 0,
+    -9999,
+    mwp$time_to_treatment
+  )
+mwp$time_to_treatment <-
+  relevel(as.factor(mwp$time_to_treatment), "-9999")
+```
+
+
+## Dummy impact function
+
+```{r}
+#| eval: false
+#| code-line-numbers: "4-6"
+# Create event time indicator
+mwp$time_to_treatment <- mwp$year - mwp$Treat_first
+
+# Define reference periods (use minus 2 to allow for anticipation in -1)
+# control <- c(-2, min(mwp$time_to_treatment)) 
+control <- c(-2)
+
+mwp$time_to_treatment <-
+  ifelse(
+    mwp$time_to_treatment %in% control | mwp$Treat_first == 0,
+    -9999,
+    mwp$time_to_treatment
+  )
+mwp$time_to_treatment <-
+  relevel(as.factor(mwp$time_to_treatment), "-9999")
+```
+
+
+## Dummy impact function
+
+```{r}
+#| eval: true
+#| code-line-numbers: "8-15"
+# Create event time indicator
+mwp$time_to_treatment <- mwp$year - mwp$Treat_first
+
+# Define reference periods (use minus 2 to allow for anticipation in -1)
+# control <- c(-2, min(mwp$time_to_treatment)) 
+control <- c(-2)
+
+mwp$time_to_treatment <-
+  ifelse(
+    mwp$time_to_treatment %in% control | mwp$Treat_first == 0,
+    -9999,
+    mwp$time_to_treatment
+  )
+mwp$time_to_treatment <-
+  relevel(as.factor(mwp$time_to_treatment), "-9999")
+```
+
+
+## Dummy impact function
+
+```{r}
+table(mwp$time_to_treatment)
+```
+
+
+## FE with Dummy impact function
+
+```{r}
+#| eval: false
+#| code-line-numbers: "1-6"
+### FE with dummy impact function
+fe_dummy <-
+  plm(lnw ~ time_to_treatment + enrol + yeduc + exp + I(exp^2),
+      data = mwp,
+      model = "within",
+      effect = "twoways")
+
+# add cluster robust SEs
+vcovx_fe_dummy <-
+  vcovHC(fe_dummy,
+         cluster = "group",
+         method = "arellano",
+         type = "HC3")
+fe_dummy$vcov <- vcovx_fe_dummy
+```
+
+
+## FE with Dummy impact function
+
+```{r}
+#| eval: true
+#| code-line-numbers: "8-14"
+### FE with dummy impact function
+fe_dummy <-
+  plm(lnw ~ time_to_treatment + enrol + yeduc + exp + I(exp^2),
+      data = mwp,
+      model = "within",
+      effect = "twoways")
+
+# add cluster robust SEs
+vcovx_fe_dummy <-
+  vcovHC(fe_dummy,
+         cluster = "group",
+         method = "arellano",
+         type = "HC3")
+fe_dummy$vcov <- vcovx_fe_dummy
+```
+
+
+## FE with Dummy impact function
+
+```{r}
+summary(fe_dummy)
+```
+
+## FE with Dummy impact function
+
+```{r}
+#| echo: true
+#| code-fold: true
+#| message: false
+#| warning: false
+# Adjusting the results matrix setup to include all marcount levels
+coef.df <- data.frame(time = factor(c(-4:7), levels = c(-4:7)),
+                      # Include all levels as factors
+                      att = NA,
+                      se = NA)
+
+# Extracting coefficients and SEs for marcount levels
+output <- summary(fe_dummy)$coefficients
+for (i in levels(coef.df$time)) {
+  coef_name <- paste0("time_to_treatment", i)
+  if (coef_name %in% rownames(output)) {
+    coef.df[coef.df$time == i, c("att", "se")] <- output[coef_name, 1:2]
+  }
+}
+
+# Fill reference category
+coef.df$att[coef.df$time == control[1]] <- 0
+coef.df$se[coef.df$time == control[1]] <- 0
+
+coef.df$model <- "TWFE Event-Study Design"
+
+coef.df$time2 <- as.numeric(as.character(coef.df$time))
+
+# Calculate 95% CI
+interval2 <- -qnorm((1 - 0.95) / 2)
+coef.df$ll <- coef.df$att - coef.df$se * interval2
+coef.df$ul <- coef.df$att + coef.df$se * interval2
+
+# Pre vs post
+coef.df$post <- ifelse(coef.df$time2 >= 0, 1, 0)
+coef.df$post <- factor(coef.df$post, labels = c("Before treatment",
+                                                          "After treatment"))
+
+# Plot
+zp <- ggplot(coef.df, aes(x = time, y = att)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 4.5, linetype = "dashed") +
+  geom_pointrange(data = coef.df,
+                  aes(
+                    x = time,
+                    y = att,
+                    ymin = ll,
+                    ymax = ul,
+                    color = post,
+                    shape = post
+                  )) +
+  scale_color_viridis_d(
+    option = "B",
+    end = 0.80,
+    begin = 0.2,
+    direction = -1
+  ) +
+  theme_minimal() + theme(
+    panel.grid.minor = element_blank(),
+    text = element_text(family = "Times New Roman", size = 16),
+    axis.text = element_text(colour = "black"),
+    legend.position = "bottom",
+    legend.title = element_blank()
+  ) +
+  scale_x_discrete() +
+  labs(x = "Event time (Year of marriage = 0)",
+       y = paste0("Effect on ln Wage"))
+
+zp
+
+```
+
+
+
+# Dynamic Diff-in-Diff - the problem
+
+## Diff-in-Diff
+
+![Diff-in-Diff design, adopted from @Cunningham.2021](fig/dd-diagram-1.png)
+
+
+## Diff-in-Diff
+
+The difference-in-differences (Diff-in-Diff) design is a simple yet powerful approach to evaluating the impact of a treatment in a panel data setting. In its basic form, the $2 \times 2$ Diff-in-Diff estimator involves two groups—treatment ($T$) and control ($C$)—observed at two time points, before and after the treatment.
+
+In this setup, the treatment is uniform across observations and occurs at the same time. Diff-in-Diff is thus equivalent to two-ways FE.
+
+
+
+## Diff-in-Diff
+
+The situation becomes more intricate with multiple time periods and when the treatment timing varies and when treatment effects are dynamic - i.e they follow a temporal pattern.
+
+Several econometric papers on this topic [@Borusyak.2023;@Callaway.2020;@DeChaisemartin.2020;@Goodman-Bacon.2021;@Sun.2021] have recently changed peoples (or at least economists) views on twoway FE.
+
+
+
+## FE and Diff-in-Diff
+
+With multiple time-periods, @Goodman-Bacon.2021 has demonstrated that Twoway Fixed Effects (TWFE) can be seen as a weighted average of all possible $2 \times 2$ Diff-in-Diff estimators.
+
+The weights are influenced by 
+
+* the group size 
+
+* treatment variance within each subgroup (how long we observe each combination before and after treatment)
+
+
+## FE and Diff-in-Diff
+
+In many settings — particularly when treatment effects are homogeneous, which would be the case if all individuals experience the same static treatment effect — this is not a problem at all. TWFE will give the correct results. 
+
+However, two-way FE may produce biased results when treatment effects are dynamic over time and treatment timing varies [@Roth.2023]. 
+
+
+
+## What's the problem?
+
+![Trend-breaking treatment](fig/DiD2.jpeg)
+
+
+
+## What's the problem?
+
+![Inverse U-shaped treatment](fig/DiD4.jpeg)
+
+## The forbidden comparison
+
+![Forbidden comparison](fig/Forbidden.jpeg)
+
+
+# Dynamic Diff-in-Diff - a solution
+
+## Potential solutions
+
+Several authors have proposed solutions [@Callaway.2020;@DeChaisemartin.2020;@Borusyak.2023;@Sun.2021;@Wooldridge.2021] by using dynamic Difference-in-Differences estimators. 
+
+For a review of these estimators, see, for instance, @Roth.2023 or Ruttenauer.2024.
+
+## Potential solutions
+
+The idea of these estimators can be described as (parametrically or non-parametrically) estimating several $2 \times 2$ Diff-in-Diffs.
+
+In a multi-group and heterogeneous treatment-timing setting, we compute group-time average treatment effects by grouping all treatment units that receive treatment at the same period into a common group $g$.
+
+
+## Dynamic Diff-in-Diff
+
+For each treatment group $g$ and time period $t$, we estimate group-specific and time-specific ATTs:
+
+$$
+\begin{align}
+\delta_{g,t} & = \mathrm{E}(\Delta y_{g}) - \mathrm{E}(\Delta y_{C})\\ 
+&= (\mathrm{E}(y_{g}^{t}) - \mathrm{E}(y_{g}^{g-1})) - (\mathrm{E}(y_{C}^{t}) - \mathrm{E}(y_{C}^{g-1})),
+\end{align}
+$$
+
+where the control group can either be the never-treated or the not-yet-treated.
+
+## Dynamic Diff-in-Diff
+
+![Estimator by @Callaway.2020](fig/DiD.jpeg)
+
+## Time-specific averages
+
+This obviously yields a large number of different treatment effects. But we can combine them, e.g. by 
+
+$$
+  \theta_D(e) := \sum_{g=1}^G \mathbf{1} \{ g + e \leq T \} \delta(g,g+e) P(G=g | G+e \leq T),
+$$ 
+
+where $e$ specifies for how long a unit has been exposed to the treatment. It is basically the average effects across all treatment-timing groups at the period $e$ after treatment. 
+
+
+## Assumptions
+
+1. Staggered treatment adoption: once treated, a unit remains treated
+
+2. Parallel trends assumption 
+
+  + based on never-treated (very strong)
+  
+  + based on not-yet-treated (a bit more likely)
+  
+3. No treatment anticipation 
+
+  + based on never-treated (a bit more likely)
+  
+  + based on not-yet-treated (very strong)
+  
+  
+
+## Assumptions  
+
+__Trade-off__: If assumption 2) is likely to hold, we can use only the never-treated as controls to relax assumption 3). If assumption 3) is likely to hold, we can include the not-yet-treated as control to relax assumption 2).
+
+
+
+
+## Dynamic Diff-in-Diff
+
+::: {.callout-note}
+The estimator of @Callaway.2020 uses a single period before treatment (by default it's the year before treatment) as pre-treatment period for many $2\times 2$ Diff-in-Diff estimators. The estimator is thus sensitive to anticipation.
+
+In contrast, @Borusyak.2023 uses all pre-treatment periods as control periods. It thus less sensitive to anticipation, but more sensitive to violations of parallel trends.
+:::
+
+
+## Example - Marriage and wage
+
+As an example, we use the `mwp` panel data, containing information on wages and family status of 268 men.
+
+We exemplary investigate the 'marriage wage premium': we analyse whether marriage leads to an increase in the hourly wage for men.
+
+
+## Example - Marriage and wage
+
+```{r}
+library(feisr)
+data("mwp", package = "feisr")
+head(mwp)
+```
+
+
+## Example - Marriage and wage
+
+```{r}
+#| eval: false
+#| code-line-numbers: "2"
+# treatment timing = year if married
+mwp$treat_timing <- ifelse(mwp$marry == 1, mwp$year, NA)
+
+# set never treated to zero
+mwp$treat_timing[mwp$evermarry == 0] <- 0
+
+# if married is not NA, used min year per id (removing NAs)
+mwp$treat_timing[!is.na(mwp$marry)] <- ave(mwp$treat_timing[!is.na(mwp$marry)],
+                                           mwp$id[!is.na(mwp$marry)],
+                                           FUN = function(x) min(x, na.rm = TRUE))
+```
+
+
+## Example - Marriage and wage
+
+```{r}
+#| eval: false
+#| code-line-numbers: "5"
+# treatment timing = year if married
+mwp$treat_timing <- ifelse(mwp$marry == 1, mwp$year, NA)
+
+# set never treated to zero
+mwp$treat_timing[mwp$evermarry == 0] <- 0
+
+# if married is not NA, used min year per id (removing NAs)
+mwp$treat_timing[!is.na(mwp$marry)] <- ave(mwp$treat_timing[!is.na(mwp$marry)],
+                                           mwp$id[!is.na(mwp$marry)],
+                                           FUN = function(x) min(x, na.rm = TRUE))
+```
+
+
+## Example - Marriage and wage
+
+```{r}
+#| eval: true
+#| code-line-numbers: "8-10"
+# treatment timing = year if married
+mwp$treat_timing <- ifelse(mwp$marry == 1, mwp$year, NA)
+
+# set never treated to zero
+mwp$treat_timing[mwp$evermarry == 0] <- 0
+
+# if married is not NA, used min year per id (removing NAs)
+mwp$treat_timing[!is.na(mwp$marry)] <- ave(mwp$treat_timing[!is.na(mwp$marry)],
+                                           mwp$id[!is.na(mwp$marry)],
+                                           FUN = function(x) min(x, na.rm = TRUE))
+```
+
+
+
+## Example - Marriage and wage
+
+```{r}
+head(mwp[, c("id", "year", "marry", "evermarry", "treat_timing")], n = 35)
+```
+
+## Example - Marriage and wage
+
+Using the package `did`.
+
+```{r}
+#| eval: false
+#| code-line-numbers: "3-6"
+#| warning: false
+library(did)
+# estimate group-time average treatment effects using att_gt method
+wages.attgt <- att_gt(yname = "lnw",
+                      tname = "year",
+                      idname = "id",
+                      gname = "treat_timing",
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      data = mwp,
+                      control_group = "notyettreated",
+                      anticipation = 0,
+                      allow_unbalanced_panel = TRUE,
+                      est_method = "ipw"
+                        )
+```
+
+
+## Example - Marriage and wage
+
+Using the package `did`.
+
+```{r}
+#| eval: false
+#| code-line-numbers: "7"
+#| warning: false
+library(did)
+# estimate group-time average treatment effects using att_gt method
+wages.attgt <- att_gt(yname = "lnw",
+                      tname = "year",
+                      idname = "id",
+                      gname = "treat_timing",
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      data = mwp,
+                      control_group = "notyettreated",
+                      anticipation = 0,
+                      allow_unbalanced_panel = TRUE,
+                      est_method = "ipw",
+                        )
+```
+
+## Example - Marriage and wage
+
+Using the package `did`.
+
+```{r}
+#| eval: false
+#| code-line-numbers: "9"
+#| warning: false
+library(did)
+# estimate group-time average treatment effects using att_gt method
+wages.attgt <- att_gt(yname = "lnw",
+                      tname = "year",
+                      idname = "id",
+                      gname = "treat_timing",
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      data = mwp,
+                      control_group = "notyettreated",
+                      anticipation = 0,
+                      allow_unbalanced_panel = TRUE,
+                      est_method = "ipw"
+                        )
+```
+
+
+## Example - Marriage and wage
+
+Using the package `did`.
+
+```{r}
+#| eval: false
+#| code-line-numbers: "10"
+#| warning: false
+library(did)
+# estimate group-time average treatment effects using att_gt method
+wages.attgt <- att_gt(yname = "lnw",
+                      tname = "year",
+                      idname = "id",
+                      gname = "treat_timing",
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      data = mwp,
+                      control_group = "notyettreated",
+                      anticipation = 0,
+                      allow_unbalanced_panel = TRUE,
+                      est_method = "ipw"
+                        )
+```
+
+
+
+## Example - Marriage and wage
+
+Using the package `did`.
+
+```{r}
+#| eval: true
+#| code-line-numbers: "11-12"
+#| warning: false
+library(did)
+# estimate group-time average treatment effects using att_gt method
+wages.attgt <- att_gt(yname = "lnw",
+                      tname = "year",
+                      idname = "id",
+                      gname = "treat_timing",
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      data = mwp,
+                      control_group = "notyettreated",
+                      anticipation = 0,
+                      allow_unbalanced_panel = TRUE,
+                      est_method = "ipw"
+                        )
+```
+
+
+## Example - Marriage and wage
+
+
+And we get a lot of individual treatment effects.
+
+```{r}
+# Show the group-time specific estimates
+summary(wages.attgt)
+```
+
+
+## Example - Marriage and wage
+
+These individual effects are similar to running a lot of individual regressions, where we compute a lot of individual $2 \times 2$ DD estimators, e.g. for group 1981:
+
+```{r}
+#| eval: true
+t <- 1981
+
+# run individual effects
+for(i in sort(unique(mwp$year))[-1]){
+  
+  # not yet treated
+  mwp$notyettreated <- ifelse(mwp$treat_timing > t & mwp$treat_timing > i, 1, 0)
+  
+  # select 1980 group, never-treated and not yet treated
+  oo <- which(mwp$treat_timing == t | mwp$treat_timing == 0 | mwp$notyettreated == 1)
+  df <- mwp[oo, ]
+  
+  # after set to 1 for year rolling year i
+  df$after <- NA
+  df$after[df$year == i] <- 1 
+  
+  # control year
+  if(i < t){
+    # if i is still before actual treatment, compare to previous year
+    tc <- i - 1
+  }else{
+    # if i is beyond actual treatment, compare to year before actual treatment (t-1)
+    tc <- t - 1
+  }
+  df$after[df$year == tc] <- 0
+  
+  # Restrict to the two years we want to compare
+  df <- df[!is.na(df$after), ]
+  
+  # Define treated group
+  df$treat <- ifelse(df$treat_timing == t, 1, 0)
+  
+  # Estiamte 2x2 DD
+  tmp.lm <- lm(lnw ~ treat*after, data = df)
+  
+  # Print
+  print(paste0(i, ": ", round(tmp.lm$coefficients[4], 4)))
+}
+```
+
+
+## Example - Marriage and wage
+
+To make this more interpretable, we re-aggregate the individuals results to a dynamic time-averaged effect (we now restrict this to observations from -3 to 6).
+
+```{r}
+wages.dyn <- aggte(wages.attgt, type = "dynamic", na.rm = TRUE,
+                   min_e = -3, max_e = 6)
+summary(wages.dyn)
+```
+
+
+
+## Example - Marriage and wage
+
+The `did` package also comes with a handy command `ggdid()` to plot the results 
+
+```{r}
+#| eval: false
+zp3 <- ggdid(wages.dyn) 
+  
+zp3 <- zp3 + 
+  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
+  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
+
+zp3
+```
+
+## Example - Marriage and wage
+
+```{r}
+#| eval: true
+#| echo: false
+zp3 <- ggdid(wages.dyn) 
+  
+zp3 <- zp3 + 
+  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
+  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
+
+zp3
+```
+
+
+# Fixed Effects Individual Slopes
+
+## Parallel trends
+
+Remember that we have to make the parallel trends assumption in twoways FE models. A violation of the parallel trends assumption leads to biased estimates. 
+
+Usually, when controlling for time fixed effects, we make the assumption that every observation experiences the same "effect of time".
+
+However, we can relax this assumption by giving each individual their own intercept __and__ their own slope.
+
+
+
+## Fixed Effects Individual Slopes
+
+The FEIS estimator
+
+$$
+y_{it} = \beta x_{it} + \alpha_i + \alpha_i*w_{it} + \zeta_t + \epsilon_{it},
+$$
+includes the person-fixed effects $\alpha_i$, and an interaction between person-fixed effects $\alpha_i$ and another time-varying variable $w_{it}$, which often is a function of time.
+
+If time-fixed effects $\zeta_t$ can be included, depends on the specification of $w_{it}$.
+
+
+## Fixed Effects Individual Slopes
+
+As with the conventional FE, FEIS can be estimated using `lm()` by including $N-1$ individual-specific dummies and interaction terms of each slope variable with the $N-1$ individual-specific dummies ($(N-1) *J$ controls). 
+
+This is however highly inefficient.
+
+
+## Fixed Effects Individual Slopes
+
+we can achieve the same result by running an `lm()` on pre-transformed data. Therefore, specify the 'residual maker' matrix $\bm M_i = \bm I_T - \bm W_i(\bm W^\intercal_i \bm W_i)^{-1}\bm W^\intercal_i$, and estimate
+
+$$
+\begin{align} 
+y_{it} - \hat{y}_{it} =& (\bm x_{it} - \hat{\bm x}_{it})\bm\beta + \epsilon_{it} - \hat{\epsilon}_{it}, \\
+\bm M_i \bm y_i =& \bm M_i \bm X_i\bm\beta + \bm M_i \bm \epsilon_{i}, \\
+\tilde{\bm y}_{i} =& \tilde{\bm X}_{i}\bm\beta + \tilde{\bm \epsilon}_{i},
+\end{align} 
+$$
+
+where $\tilde{\bm y}_{i}$, $\tilde{\bm X}_{i}$, and $\tilde{\bm \epsilon}_{i}$ are the residuals of regressing $\bm y_{i}$, each column-vector of $\bm X_{i}$, and $\bm \epsilon_{i}$ on $\bm W_i$. 
+
+
+
+## FEIS intuitively
+
+1. estimate the individual-specific predicted values for the dependent variable and each covariate based on an individual intercept and the additional slope variables of $\bm W_i$, 
+
+2. 'detrend' the original data by these individual-specific predicted values, and 
+
+3. run an OLS model on the residual ('detrended') data. 
+
+
+## FEIS Mundlak
+
+Similarly, we can estimate a correlated random effects (CRE) model [@Chamberlain.1982; @Mundlak.1978; @Wooldridge.2010] including the individual specific predictions $\hat{\bm X}_{i}$ to obtain the FEIS estimator:
+
+$$
+\begin{align} 
+\bm y_{i} =& \bm X_{i}\bm\beta + \hat{\bm X}_{i}\bm\rho + \bm \epsilon_{i}.
+\end{align}
+$$
+
+It does not necessarily be time or person-specific. You could also control for family-specific pre-treatment conditions or regional time-trends [@Ruttenauer.2023].
+
+
+## Example
+
+As an example, we use the `mwp` panel data, containing information on wages and family status of 268 men.
+
+We exemplary investigate the 'marriage wage premium': we analyse whether marriage leads to an increase in the hourly wage for men.
+
+
+## Example
+
+```{r}
+library(feisr)
+data("mwp", package = "feisr")
+head(mwp)
+```
+
+## Example
+
+```{r}
+#| eval: FALSE
+#| code-line-numbers: "1-2,5-6"
+wages.fe <- plm(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                + exp + I(exp^2), 
+                data = mwp, index = c("id", "year"),
+                model = "within", effect = "individual")
+wages.re <- plm(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                + exp + I(exp^2), 
+                data = mwp, index = c("id", "year"),
+                model = "random", effect = "individual")
+```
+
+
+## Example
+
+```{r}
+#| eval: TRUE
+#| code-line-numbers: "3-4,7-8"
+wages.fe <- plm(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                + exp + I(exp^2), 
+                data = mwp, index = c("id", "year"),
+                model = "within", effect = "individual")
+wages.re <- plm(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                + exp + I(exp^2), 
+                data = mwp, index = c("id", "year"),
+                model = "random", effect = "individual")
+```
+
+
+
+## Cluster robust SEs
+
+```{r}
+#| eval: FALSE
+#| code-line-numbers: "2,3"
+# Calculate vcov
+vcovx_fe <- vcovHC(wages.fe, cluster = "group", method = "arellano", type = "HC3")
+vcovx_re <- vcovHC(wages.re, cluster = "group", method = "arellano", type = "HC3")
+
+# Replace original vcov in output
+wages.fe$vcov <- vcovx_fe
+wages.re$vcov <- vcovx_re
+```
+
+
+## Cluster robust SEs
+
+```{r}
+#| eval: true
+#| code-line-numbers: "6,7"
+# Calculate vcov
+vcovx_fe <- vcovHC(wages.fe, cluster = "group", method = "arellano", type = "HC3")
+vcovx_re <- vcovHC(wages.re, cluster = "group", method = "arellano", type = "HC3")
+
+# Replace original vcov in output
+wages.fe$vcov <- vcovx_fe
+wages.re$vcov <- vcovx_re
+```
+
+
+
+## FEIS
+
+```{r}
+#| eval: false
+#| code-line-numbers: "1,2"
+wages.feis <- feis(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                   | exp + I(exp^2), 
+                   data = mwp, id = "id",
+                   robust = TRUE)
+summary(wages.feis)
+```
+
+
+## FEIS
+
+```{r}
+#| eval: false
+#| code-line-numbers: "3,4"
+wages.feis <- feis(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                   | exp + I(exp^2), 
+                   data = mwp, id = "id",
+                   robust = TRUE)
+summary(wages.feis)
+```
+
+
+## FEIS
+
+```{r}
+#| eval: true
+#| code-line-numbers: "5"
+wages.feis <- feis(lnw ~ marry + enrol + yeduc + as.factor(yeargr)
+                   | exp + I(exp^2), 
+                   data = mwp, id = "id",
+                   robust = TRUE)
+summary(wages.feis)
+```
+
+
+## Comparison
+
+```{r}
+screenreg(list(wages.re, wages.fe, wages.feis), digits = 3,
+          custom.model.names = c("RE", "FE", "FEIS"))
+```
+
+
+## Interpretation {.smaller}
+
+* RE: Married observations have a significantly higher wage than unmarried observations.
+
+* FE: If people marry, they experience an increase in wages afterwards. The effect is significant and slightly lower than the RE.
+
+* FEIS: Accounting for the individual wage trend before marriage, we do not observe an increase in wages if people marry. The effect is small and non-significant.
+
+Overall, this indicates that there is a problem with non-parallel trends: Those with steeper wage trajectories are more likely to marry (or marry earlier).
+
+As mentioned above, we can achieve the same by 1) manually calculating the individual specific trends and 2) including them as additional covariates in the model.
+
+
+## References

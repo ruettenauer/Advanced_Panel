@@ -1,0 +1,215 @@
+---
+title: "Panel Data Introduction"
+author: "Tobias Ruttenauer"
+format: 
+  revealjs:
+    scrollable: true
+    footer: <[Home](/index.html)> 
+---
+
+```{r setup, cache=FALSE, include=FALSE}
+# options(htmltools.dir.version = FALSE)
+# library(knitr)
+# opts_chunk$set(
+#   fig.align="center",  
+#   fig.height=4, #fig.width=6,
+#   # out.width="748px", #out.length="520.75px",
+#   dpi=300, #fig.path='Figs/',
+#   cache=T#, echo=F, warning=F, message=F
+#   )
+library(tidyverse)
+library(hrbrthemes)
+library(fontawesome)
+library("plm")
+```
+
+
+## This course  {.smaller}
+
+:::: {.columns}
+
+::: {.column width="60%"}
+### Outline
+
+1) Introduction Panel Data
+2) Estimators: RE & FE
+3) Diff-in-Diff
+4) Extensions: Individual Slopes
+5) Time Varying Treatment Effects 
+:::
+
+
+::: {.column width="40%"}
+### Me
+
+`r fa('address-book')` [Tobias Rüttenauer](https://ruettenauer.github.io/)
+
+`r fa('envelope')` [t.ruttenauer@ucl.ac.uk](mailto:t.ruttenauer@ucl.ac.uk)
+
+`r fa('graduation-cap')` Lecturer in Quantitative Social Science at UCL
+
+`r fa('bicycle')` Environmental Sociology
+:::
+::::
+
+
+
+## Further Materials {.smaller}
+
+This material in Handbook format: @Ruttenauer.2024c
+
+Extensive slides by Josef Brüderl and Volker Ludwig: [Slides](https://www.ls3.soziologie.uni-muenchen.de/studium-lehre/archiv/teaching-marterials/panel-analysis_april-2019.pdf). See also @Bruderl.2015.
+
+
+### Books:
+
+* Intuitive: @Allison.2009
+
+* Comprehensive and formal: @Wooldridge.2010
+
+* For R experts: @Croissant.2019
+
+* General introductions to causal estimation techniques: @Angrist.2015, @Cunningham.2021, @Firebaugh.2008, @Huntington-Klein.2021
+
+The books by @Cunningham.2021 ([Link](https://mixtape.scunning.com/)) and @Huntington-Klein.2021 ([Link](https://theeffectbook.net/)) are freely available online!
+
+
+
+
+## Why panel data analysis?
+
+::: {.fragment fragment-index=1}
+In empirical social sciences, we are often interested in the **causal research questions**: we want to investigate questions of cause and effect. 
+
+However, randomized controlled trials (RCT) are often infeasible (e.g. effects of education, marriage, pregnancy).
+:::
+
+::: {.fragment fragment-index=2}
+A potential middle ground between those two approaches: “**compare alike with alike**”. 
+
+With panel data, we observe the same unit (person, region, or country) repeatedly over time. We can then  not only compare two different units to each other. We can also compare a unit in an earlier stage to the same unit in a later stage.
+:::
+
+
+## Panel Data Structure
+
+Usually cross-sectional data is organized as a matrix, where rows represent the observation / individual and the columns hold the variables. In panel data settings, we need to add the dimension of time. There are two ways to do so:
+
+* Long format: $N \times T$ observations (rows), with variables "id" and "time".
+
+* Wide format: $N$ observations, and $T \times K$ variables, which one variable for each time-period.
+
+## Panel Data Structure
+
+Let's have a look at the "Males" data of the `plm` package.
+  
+```{r}
+library("plm")
+data("Males")
+head(Males[,1:5], n = 16)
+```
+
+## Panel Data Structure
+
+Moreover, there two types of panel data:
+
+* Balanced: Contains information for each unit at each time period
+
+* Unbalanced: Some units have missing information at some time periods
+
+```{r}
+is.pbalanced(Males, index = c("nr", "year"))
+```
+
+## Panel transformation
+
+A nice feature of panel data is that we can do some within-person transformation. For instance we can calculate the lags and leads, or the first differences of data. 
+
+::: {.callout-note}
+always make sure the data is sorted properly before you do!
+:::
+
+
+
+## Panel transformation
+
+Person-specific summary values
+
+```{r}
+# Order data
+Males <- Males[order(Males$nr, Males$year),]
+
+# Person specific means
+Males$m_wage <- ave(Males$wage,
+                    Males$nr,
+                    FUN = function(x) mean(x, na.rm = TRUE))
+```
+
+
+
+## Panel transformation
+
+Lag and first difference
+
+```{r}
+# Order data
+Males <- Males[order(Males$nr, Males$year),]
+
+# Lag (last years value)
+Males$lag_wage <- ave(Males$wage,
+                      Males$nr,
+                      FUN = function(x) dplyr::lag(x, n = 1))
+
+# First difference (this years value minus last years value)
+Males$fd_wage <- ave(Males$wage,
+                      Males$nr,
+                      FUN = function(x) x - dplyr::lag(x, n = 1))
+```
+
+
+## Panel transformation
+
+```{r}
+head(Males[, c("nr", "year", "wage", "m_wage", "lag_wage", "fd_wage")], n = 16)
+```
+
+
+## Panel surveys
+
+### Some examples
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+* [PSID](https://psidonline.isr.umich.edu/)
+
+* [National Longitudinal Survey of Youth](https://www.nlsinfo.org/content/cohorts/nlsy79)
+
+* [Understanding Society](https://www.understandingsociety.ac.uk/)
+
+* [Millennium Cohort Study](https://cls.ucl.ac.uk/cls-studies/millennium-cohort-study/)
+
+:::
+
+::: {.column width="50%"}
+
+* [SOEP](https://www.diw.de/de/diw_01.c.678568.de/forschungsdatenzentrum_soep.html)
+
+* [Pairfam](https://www.pairfam.de/)
+
+* [SHARE](http://www.share-project.org/home0.html)
+
+* [LISS](https://www.lissdata.nl/)
+
+:::
+::::
+
+The [Comparative Panel File](https://www.cpfdata.com/) provides an infrastructure of data harmonisation across various panels. See @Turek.2021.
+
+## Panel Attrition
+
+![[SOEP Documentation](https://www.diw.de/documents/publikationen/73/diw_01.c.745900.de/diw_ssp0826.pdf)](fig/soep.PNG)
+
+## References
+

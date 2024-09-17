@@ -1,0 +1,33 @@
+project:
+  title: "Advanced Panel Data Analysis"
+  type: website
+  output-dir: docs
+  
+website:  
+  repo-url: https://github.com/ruettenauer/Advanced_Panel/
+  navbar: 
+    left: 
+      - 01_Intro.qmd
+      - 02_Estimators1.qmd
+      - 03_Estimators2.qmd
+      
+
+format:
+  html:
+    number-depth: 3
+    theme: cosmo
+    highlight-style: atom-one
+    code-block-bg: "#f0f0f0"
+    code-block-border-left: "#045a8d"
+    code-fold: false
+    code-summary: "Code"
+    code-tools: true
+    code-link: true
+    code-copy: true      
+
+execute:
+  echo: true
+  cache: true
+
+
+bibliography: DID.bib   
