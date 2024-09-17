@@ -1,5 +1,5 @@
 ---
-title: "Advanced Panel Data Anlysis"
+title: "Advanced Panel Data Analysis"
 output: 
   html_document:
     toc: true

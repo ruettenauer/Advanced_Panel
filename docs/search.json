@@ -2,7 +2,7 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Advanced Panel Data Anlysis",
+    "title": "Advanced Panel Data Analysis",
     "section": "",
     "text": "Course Description\nThis course provides a hands-on introduction to advanced panel data methods. It briefly covers the basic concepts of random effects (RE) and fixed effects (FE) estimators. Moving beyond the fundamentals, the workshop offers insights into recent developments and advances in panel data methods, such as the inclusion of individual or group-specific slopes and the identification of time-varying treatment effects via impact functions and novel Diff-in-Diff estimators.\n\n\nCourse Outline\nIntro Panel Data\nPanel Data Estimators 1\n\nVariance Decomposition\nFixed Effects\nDifference in Differences\nRandom Effects\n\nPanel Data Estimators 2\n\nDynamic treatment effects\nDynamic Diff-in-Diff\nFixed Effects Individual Slopes"
   },
