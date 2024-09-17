@@ -9,9 +9,12 @@ website:
     left:
       - href: index.qmd
         text: "Home"
-      - 01_Intro.qmd
-      - 02_Estimators1.qmd
-      - 03_Estimators2.qmd
+      - href: 01_Intro.qmd
+        text: "Introduction"
+      - href: 02_Estimators1.qmd
+        text: "Estimators 1"
+      - href: 03_Estimators2.qmd
+        text: "Estimators 2"
     tools:
       - icon: github
         menu:
