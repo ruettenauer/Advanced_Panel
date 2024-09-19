@@ -1,6 +1,6 @@
 ---
 title: "Panel Data Estimators 1"
-author: "Tobias Ruttenauer"
+author: "Tobias Rüttenauer"
 format: 
   revealjs:
     scrollable: true
@@ -114,6 +114,25 @@ lm1 <- lm(happiness ~ age, data = df)
 lm2 <- lm(happiness ~ age + cohort, data = df)
 lm3 <- lm(happiness ~ age + idname, data = df)
 lm4 <- lm(m_happiness ~ m_age, data = df)
+```
+
+
+## Age and happiness
+
+```{r}
+#| echo: true
+#| code-fold: true
+#| message: false
+#| warning: false
+zp0 <- ggplot(df, aes(age, happiness)) +
+  geom_point( aes(x = age, y = happiness), size = 2, stroke = 1) +
+  ylim(3.3, 9.2) + expand_limits(y = c(0, 0)) + 
+  theme_classic() +
+  theme(legend.key = element_blank(), legend.title = element_blank(),
+        legend.position = c(0.95,0.05), legend.justification = c("right", "bottom"),
+        legend.background = element_blank(),
+        legend.box.background = element_rect(colour = "black"))
+zp0  
 ```
 
 
@@ -323,6 +342,8 @@ $$
 \bar{y_{i}} = \alpha + \beta_{BTW} \bar{x_{i}} + \bar{\upsilon_{i}},
 $$
 
+where $\bar{y_{i}}$ and $\bar{x_{i}}$ are the unit-specific means of $x_{it}$ and $y_{it}$, respectively.
+
 
 
 ## Between estimator
@@ -427,7 +448,7 @@ lm3 <- lm(happiness ~ age + idname, data = df)
 summary(lm3)
 ```
 
-Make sure idname is a factor. Otherwise use `as.factor(idname)'.
+Make sure idname is a factor. Otherwise use `as.factor(idname)`.
 
 
 ## Within estimator
@@ -473,9 +494,9 @@ fe1 <- plm(happiness ~ age, data = df,
 summary(fe1)
 ```
 
-* effect: Define the type of fixed effects (individual, time, twoways)
+* effect: Define the type of fixed effects (`individual`, `time`, `twoways`)
 
-* model: Define the estimator (Within for FE)
+* model: Define the estimator (`within` for FE)
 
 
 
@@ -581,7 +602,9 @@ fe1_alt <- felm(happiness ~ age | id | 0 | id,
 summary(fe1_alt)
 ```
 
-* Formula: 1) ordinary covariates, 2) fixed effects, 3) IVs, 4) Cluster SEs
+Four-part formula:
+
+* Formula: 1) ordinary covariates, 2) fixed effects, 3) Instrumental Variables, 4) Cluster for SEs
 
 * y ~ x1 + x2 | f1 + f2 | (Q|W ~ x3+x4) | clu1 + clu2
 
@@ -623,7 +646,7 @@ relies on very strong assumptions for consistency, most importantly: The error (
 
 ## Marriage and income
 
-Imagine we want to know how getting married affects peoples income. POLS (and the between estimator) compare people who eventually get married to people who never get married.
+Imagine we want to know how getting married affects a persons happiness or their income. POLS (and the between estimator) compare people who eventually get married to people who never get married.
 
 What could potentially go wrong?
 
@@ -658,8 +681,8 @@ In practice, we usually use a transformation approach, where we first subtract t
 
 $$
 \begin{split}
-y_{it} - \bar{y_{i}} $= \beta (x_{it}-\bar{x_{i}}) + (\alpha_i - \alpha_i) + (\epsilon_{it}-\bar{\epsilon_{i}})\\
-\tilde{y}_{it} $= \beta \tilde{x}_{it} + \tilde{\epsilon}_{it}.
+y_{it} - \bar{y_{i}} &= \beta (x_{it}-\bar{x_{i}}) + (\alpha_i - \alpha_i) + (\epsilon_{it}-\bar{\epsilon_{i}})\\
+\tilde{y}_{it} &= \beta \tilde{x}_{it} + \tilde{\epsilon}_{it}.
 \end{split}
 $$
 

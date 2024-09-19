@@ -1,6 +1,6 @@
 ---
 title: "Panel Data Introduction"
-author: "Tobias Ruttenauer"
+author: "Tobias RÜttenauer"
 format: 
   revealjs:
     scrollable: true
@@ -32,10 +32,10 @@ library("plm")
 ### Outline
 
 1) Introduction Panel Data
-2) Estimators: RE & FE
-3) Diff-in-Diff
-4) Extensions: Individual Slopes
-5) Time Varying Treatment Effects 
+2) Variance Components
+3) Estimators: FE & RE & Diff-in-Diff
+4) Dynamic Diff-in-Diff
+5) Fixed Effects Individual Slopes
 :::
 
 
@@ -58,7 +58,7 @@ library("plm")
 
 This material in Handbook format: @Ruttenauer.2024c
 
-Extensive slides by Josef Brüderl and Volker Ludwig: [Slides](https://www.ls3.soziologie.uni-muenchen.de/studium-lehre/archiv/teaching-marterials/panel-analysis_april-2019.pdf). See also @Bruderl.2015.
+[Slides by Josef Brüderl and Volker Ludwig](https://www.ls3.soziologie.uni-muenchen.de/studium-lehre/archiv/teaching-marterials/panel-analysis_april-2019.pdf). See also @Bruderl.2015.
 
 
 ### Books:
@@ -121,6 +121,49 @@ Moreover, there two types of panel data:
 is.pbalanced(Males, index = c("nr", "year"))
 ```
 
+
+## Panel Attrition
+
+![[SOEP Documentation](https://www.diw.de/documents/publikationen/73/diw_01.c.745900.de/diw_ssp0826.pdf)](fig/soep.PNG)
+
+
+
+## Panel surveys
+
+### Some examples
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+* [PSID](https://psidonline.isr.umich.edu/)
+
+* [National Longitudinal Survey of Youth](https://www.nlsinfo.org/content/cohorts/nlsy79)
+
+* [Understanding Society](https://www.understandingsociety.ac.uk/)
+
+* [Millennium Cohort Study](https://cls.ucl.ac.uk/cls-studies/millennium-cohort-study/)
+
+:::
+
+::: {.column width="50%"}
+
+* [SOEP](https://www.diw.de/de/diw_01.c.678568.de/forschungsdatenzentrum_soep.html)
+
+* [Pairfam](https://www.pairfam.de/)
+
+* [SHARE](http://www.share-project.org/home0.html)
+
+* [LISS](https://www.lissdata.nl/)
+
+:::
+::::
+
+The [Comparative Panel File](https://www.cpfdata.com/) provides an infrastructure of data harmonisation across various panels. See @Turek.2021.
+
+
+
+
 ## Panel transformation
 
 A nice feature of panel data is that we can do some within-person transformation. For instance we can calculate the lags and leads, or the first differences of data. 
@@ -174,42 +217,7 @@ head(Males[, c("nr", "year", "wage", "m_wage", "lag_wage", "fd_wage")], n = 16)
 ```
 
 
-## Panel surveys
 
-### Some examples
-
-:::: {.columns}
-
-::: {.column width="50%"}
-
-* [PSID](https://psidonline.isr.umich.edu/)
-
-* [National Longitudinal Survey of Youth](https://www.nlsinfo.org/content/cohorts/nlsy79)
-
-* [Understanding Society](https://www.understandingsociety.ac.uk/)
-
-* [Millennium Cohort Study](https://cls.ucl.ac.uk/cls-studies/millennium-cohort-study/)
-
-:::
-
-::: {.column width="50%"}
-
-* [SOEP](https://www.diw.de/de/diw_01.c.678568.de/forschungsdatenzentrum_soep.html)
-
-* [Pairfam](https://www.pairfam.de/)
-
-* [SHARE](http://www.share-project.org/home0.html)
-
-* [LISS](https://www.lissdata.nl/)
-
-:::
-::::
-
-The [Comparative Panel File](https://www.cpfdata.com/) provides an infrastructure of data harmonisation across various panels. See @Turek.2021.
-
-## Panel Attrition
-
-![[SOEP Documentation](https://www.diw.de/documents/publikationen/73/diw_01.c.745900.de/diw_ssp0826.pdf)](fig/soep.PNG)
 
 ## References
 

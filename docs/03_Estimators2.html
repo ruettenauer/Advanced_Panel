@@ -10,7 +10,7 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.3.450">
 
-  <meta name="author" content="Tobias Ruttenauer">
+  <meta name="author" content="Tobias Rüttenauer">
   <title>Advanced Panel Data Analysis - Panel Data Estimators 2</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -415,7 +415,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Tobias Ruttenauer 
+Tobias Rüttenauer 
 </div>
 </div>
 </div>
@@ -1562,7 +1562,141 @@ Estimation Method:  Inverse Probability Weighting</code></pre>
 <section id="example---marriage-and-wage-16" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 
-<img data-src="03_Estimators2_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section></section>
+<img data-src="03_Estimators2_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<section id="differences-between-estimators" class="slide level2">
+<h2>Differences between estimators</h2>
+<ul>
+<li><p>Disaggregation based estimators</p></li>
+<li><p>Imputation based estimators</p></li>
+</ul>
+</section>
+<section id="disaggregation-based-estimators" class="slide level2 smaller">
+<h2>Disaggregation based estimators</h2>
+<p>The <span class="citation" data-cites="Sun.2021">Sun and Abraham (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span> estimator calculates the cohort-specific average treatment effect on the treated <span class="math inline">\(CATT_{e,\ell}\)</span> for <span class="math inline">\(\ell\)</span> periods from the initial treatment and for the cohort of units first treated at time <span class="math inline">\(e\)</span>. These cohort-specific and time-specific estimates are the average based on their sample weights.</p>
+<h3 id="the-algorithm">The algorithm</h3>
+<ol type="1">
+<li>Estimate <span class="math inline">\(CATT_{e,\ell}\)</span> with a two-way fixed effects estimator that interacts the cohort and relative period indicators</li>
+</ol>
+<p><span class="math display">\[
+Y_{i,t}  =\alpha_{i}+\lambda_{t}+\sum_{e\not\in C}\sum_{\ell\neq-1}\delta_{e,\ell}(\mathbf{1}\{E_{i}=e\}\cdot D_{i,t}^{\ell})+\epsilon_{i,t}.
+\]</span></p>
+<p>The control group cohort <span class="math inline">\(C\)</span> can either be the never-treated, or (if they don’t exist), <span class="citation" data-cites="Sun.2021">Sun and Abraham (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span> propose to use the latest-treated cohort as control group. By default, the reference period is the relative period before the treatment <span class="math inline">\(\ell=-1\)</span>.</p>
+<ol start="2" type="1">
+<li><p>Calculate the sample weights of the cohort within each relative time period <span class="math inline">\(Pr\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}\)</span></p></li>
+<li><p>Use the estimated coefficients from step 1) <span class="math inline">\(\widehat{\delta}_{e,\ell}\)</span> and the estimated weights from step 2) <span class="math inline">\(\widehat{Pr}\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}\)</span> to calculate the interaction-weighted estimator <span class="math inline">\(\widehat{\nu}_{g}\)</span>:</p></li>
+</ol>
+<p><span class="math display">\[
+\widehat{\nu}_{g}=\frac{1}{\left|g\right|}\sum_{\ell\in g}\sum_{e}\widehat{\delta}_{e,\ell}\widehat{Pr}\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}
+\]</span></p>
+<p>This is similar to a ‘parametric’ (although very flexible) version of <span class="citation" data-cites="Callaway.2020">Callaway and Sant’Anna (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span>.</p>
+</section>
+<section id="imputation-based-methods" class="slide level2 smaller">
+<h2>Imputation based methods</h2>
+<p>This comes from <a href="https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html">Golub Capital Social Impact Lab ML Tutorial</a></p>
+<h3 id="horizontal-regression-and-unconfoundedness-literature">Horizontal Regression and Unconfoundedness literature</h3>
+<p>The unconfoundedness literature focuses on the <strong>single-treated-period structure</strong> with a <strong>thin matrix (<span class="math inline">\(N \gg T\)</span>)</strong>, a substantial number of treated and control units, and imputes the missing potential outcomes using control units with similar lagged outcomes. So <span class="math inline">\(Y_{iT}\)</span> is missing for some <span class="math inline">\(i\)</span> (<span class="math inline">\(N_t\)</span> “treated units”) and no missing entries for other units (<span class="math inline">\(N_c = N - N_t\)</span> “control units”):</p>
+<p><span class="math display">\[
+Y_{N\times T}=\left(
+\begin{array}{ccccccc}
+  \checkmark  &amp;  \checkmark  &amp;   \checkmark  \\
+\checkmark  &amp;  \checkmark  &amp;   \checkmark  \\
+\checkmark  &amp;  \checkmark    &amp; {\color{red} ?}  \\
+\checkmark  &amp;  \checkmark     &amp; {\color{red} ?}  \\
+\checkmark  &amp;  \checkmark  &amp;   \checkmark   \\
+\vdots  &amp; \vdots  &amp;\vdots \\
+\checkmark  &amp;  \checkmark    &amp;  {\color{red} ?}  \\
+\end{array}
+\right)\hskip1cm  W_{N\times T}=\left(
+\begin{array}{ccccccc}
+  1  &amp;  1  &amp;   1  \\
+1 &amp;  1    &amp; 1  \\
+1    &amp;  1     &amp; 0  \\
+1  &amp;  1     &amp; 0  \\
+1   &amp;  1     &amp;  1   \\
+\vdots  &amp; \vdots  &amp;\vdots \\
+1    &amp;  1    &amp;  0  \\
+\end{array}
+\right)
+\]</span></p>
+<p>For treated units, the predicted outcome is:</p>
+<p><span class="math display">\[
+\hat Y_{iT}=\hat \beta_0+\sum_{s=1}^{T-1} \hat \beta_s Y_{Nt},
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+\hat\beta= \arg\min_{\beta} \sum_{i:(i,T)\in \cal{O}}(Y_{iT}-\beta_0-\sum_{s=1}^{T-1}\beta_s Y_{is})^2.
+\]</span></p>
+<p>A simple version of the unconfoundedness approach is to regress the last period outcome on the lagged outcomes. A more advances version would be matching.</p>
+<h3 id="vertical-regression-and-the-synthetic-control-literature">Vertical Regression and the Synthetic Control literature</h3>
+<p>The <strong>synthetic control</strong> methods focus primarily on <strong>the single-treated-unit block structure</strong> with a relatively fat (<span class="math inline">\(T\gg N\)</span>) or approximately square (<span class="math inline">\(T\approx N\)</span>) matrix. <span class="math inline">\(Y_{Nt}\)</span> is missing for <span class="math inline">\(t \geq T_0\)</span> and there are no missing entries for other units:</p>
+<p><span class="math display">\[
+Y_{N\times T}=\left(
+\begin{array}{ccccccc}
+\checkmark &amp; \checkmark   &amp; \checkmark  &amp; \dots &amp; \checkmark \\
+\checkmark  &amp; \checkmark &amp; \checkmark   &amp; \dots &amp; \checkmark  \\
+\checkmark  &amp; \checkmark  &amp; {\color{red} ?}  &amp; \dots &amp; {\color{red} ?}  \\
+\end{array}
+\right)\hskip0.5cm
+W_{N\times T}=\left(
+\begin{array}{ccccccc}
+1 &amp; 1 &amp; 1  &amp; \dots &amp; 1 \\
+1  &amp; 1 &amp; 1   &amp; \dots &amp; 1  \\
+1  &amp; 1  &amp; 0  &amp; \dots &amp; 0  \\
+\end{array}
+\right)
+\]</span></p>
+<p>For the treated unit in period <span class="math inline">\(t\)</span>, for <span class="math inline">\(t=T_0, ..., T\)</span>, the predicted outcome is:</p>
+<p><span class="math display">\[
+\hat Y_{Nt}=\hat \omega_0+\sum_{i=1}^{N-1} \hat \omega_i Y_{it}
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+\hat\omega= \arg\min_{\omega} \sum_{t:(N,t)\in \cal{O}}(Y_{Nt}-\omega_0-\sum_{i=1}^{N-1}\omega_i Y_{is})^2.
+\]</span></p>
+<p>See <span class="citation" data-cites="Athey.2021">Athey et al. (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span></p>
+</section>
+<section id="borusyak-did-imputation" class="slide level2 smaller scrollable" data-visibility="uncounted">
+<h2>Borusyak DiD imputation</h2>
+<p>We start with the assumption that we can write the underlying model as:</p>
+<p><span class="math display">\[
+Y_{it} = A_{it}^{'}\lambda_i + X_{it}^{'}\delta + D_{it}^{'}\Gamma_{it}^{'}\theta + \varepsilon_{it}  
+\]</span></p>
+<ul>
+<li>where <span class="math inline">\(A_{it}^{'}\lambda_i\)</span> contains unit FEs, but also allows to interact them with some observed covariates unaffected by the treatment status</li>
+<li>and <span class="math inline">\(X_{it}^{'}\delta\)</span> nests period FEs but additionally allows any time-varying covariates,</li>
+<li><span class="math inline">\(\lambda_i\)</span> is a vector of unit-specific nuisance parameters,</li>
+<li>and <span class="math inline">\(\delta\)</span> is a vector of nuisance parameters associated with common covariates.</li>
+</ul>
+<h3 id="the-algorithm-1">The algorithm</h3>
+<ol type="1">
+<li>For every treated observation, estimate expected untreated potential outcomes <span class="math inline">\(A_{it}^{'}\lambda_i + X_{it}^{'}\delta\)</span> by some unbiased linear estimator <span class="math inline">\(\hat Y_{it}(0)\)</span> using data from the untreated observations only,</li>
+<li>For each treated observation (<span class="math inline">\(\in\Omega_1\)</span>), set <span class="math inline">\(\hat\tau_{it} = Y_{it} - \hat{Y}_{it}(0)\)</span>,</li>
+<li>Estimate the target by a weighted sum <span class="math inline">\(\hat\tau = \sum_{it\in\Omega_1}w_{it}\hat\tau_{it}\)</span>.</li>
+</ol>
+<p>See <span class="citation" data-cites="Borusyak.2021">Borusyak, Jaravel, and Spiess (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span>.</p>
+<p>Note that this uses all pre-treatment periods (also those further away) for imputation of the counterfactual.</p>
+</section>
+<section id="differences" class="slide level2">
+<h2>Differences</h2>
+
+<img data-src="fig/New_ATT_combined_00.png" class="r-stretch quarto-figure-center"><p class="caption"><span class="citation" data-cites="Ruttenauer.2024">Rüttenauer and Aksoy (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span></p></section>
+<section id="differences-1" class="slide level2">
+<h2>Differences</h2>
+
+<img data-src="fig/New_ATT_combined.png" class="r-stretch quarto-figure-center"><p class="caption"><span class="citation" data-cites="Ruttenauer.2024">Rüttenauer and Aksoy (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span></p></section>
+<section id="example-2-marriage-and-satisfaction-with-sex-life" class="slide level2">
+<h2>Example 2: Marriage and satisfaction with sex life</h2>
+<p>We use 13 waves of panel data from the Panel Analysis of Intimate Relationships and Family Dynamics (pairfam) survey, release 14.1 <span class="citation" data-cites="Bruederl.2023">(<a href="#/references" role="doc-biblioref" onclick="">Brüderl et al. 2023</a>)</span>, to examine how the transition into first marriage is associated with changes in respondents’ sexual satisfaction.</p>
+<p>See <span class="citation" data-cites="Ruttenauer.2024c">Rüttenauer and Kapelle (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span> for more information</p>
+</section>
+<section id="example-2-marriage-and-satisfaction-with-sex-life-1" class="slide level2">
+<h2>Example 2: Marriage and satisfaction with sex life</h2>
+
+<img data-src="fig/Coefplot.jpeg" class="r-stretch quarto-figure-center"><p class="caption">Example from <span class="citation" data-cites="Ruttenauer.2024c">Rüttenauer and Kapelle (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span></p></section>
+<section id="example-2-marriage-and-satisfaction-with-sex-life-2" class="slide level2">
+<h2>Example 2: Marriage and satisfaction with sex life</h2>
+
+<img data-src="fig/Dynamic.jpeg" class="r-stretch quarto-figure-center"><p class="caption">Example from <span class="citation" data-cites="Ruttenauer.2024c">Rüttenauer and Kapelle (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span></p></section></section>
 <section>
 <section id="fixed-effects-individual-slopes" class="title-slide slide level1 center">
 <h1>Fixed Effects Individual Slopes</h1>
@@ -1810,6 +1944,14 @@ RMSE                                               0.285
 <p>Overall, this indicates that there is a problem with non-parallel trends: Those with steeper wage trajectories are more likely to marry (or marry earlier).</p>
 <p>As mentioned above, we can achieve the same by 1) manually calculating the individual specific trends and 2) including them as additional covariates in the model.</p>
 </section>
+<section id="the-biggest-limitations" class="slide level2 smaller">
+<h2>The biggest limitations</h2>
+<ul>
+<li><p>It is crucial to model the trends correctly</p></li>
+<li><p>You need <span class="math inline">\(k+1\)</span> time-periods per unit to estimate the trend based on <span class="math inline">\(k\)</span> variables (related to selection?)</p></li>
+<li><p>With dynamic treatment effects (which are not specified in your model), the individual trends may absorb the unfolding treatment effect</p></li>
+</ul>
+</section>
 <section id="references" class="slide level2 smaller scrollable">
 <h2>References</h2>
 
@@ -1817,8 +1959,17 @@ RMSE                                               0.285
 <p>&lt;<a href="./index.html">Home</a>&gt;</p>
 </div>
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Athey.2021" class="csl-entry" role="listitem">
+Athey, Susan, Mohsen Bayati, Nikolay Doudchenko, Guido Imbens, and Khashayar Khosravi. 2021. <span>“Matrix Completion Methods for Causal Panel Data Models.”</span> <em>Journal of the American Statistical Association</em> 59: 1–15. <a href="https://doi.org/10.1080/01621459.2021.1891924">https://doi.org/10.1080/01621459.2021.1891924</a>.
+</div>
+<div id="ref-Borusyak.2021" class="csl-entry" role="listitem">
+Borusyak, Kirill, Xavier Jaravel, and Jann Spiess. 2021. <span>“Revisiting <span>Event Study Designs</span>: <span>Robust</span> and <span>Efficient Estimation</span>.”</span> <a href="https://doi.org/10.48550/ARXIV.2108.12419">https://doi.org/10.48550/ARXIV.2108.12419</a>.
+</div>
 <div id="ref-Borusyak.2023" class="csl-entry" role="listitem">
-Borusyak, Kirill, Xavier Jaravel, and Jann Spiess. 2023. <span>“Revisiting <span>Event Study Designs</span>: <span>Robust</span> and <span>Efficient Estimation</span>.”</span> <a href="https://doi.org/10.48550/ARXIV.2108.12419">https://doi.org/10.48550/ARXIV.2108.12419</a>.
+———. 2023. <span>“Revisiting <span>Event Study Designs</span>: <span>Robust</span> and <span>Efficient Estimation</span>.”</span> <a href="https://doi.org/10.48550/ARXIV.2108.12419">https://doi.org/10.48550/ARXIV.2108.12419</a>.
+</div>
+<div id="ref-Bruederl.2023" class="csl-entry" role="listitem">
+Brüderl, Josef, Sonja Drobnič, Karsten Hank, Franz. J. Neyer, Sabine Walper, Christof Wolf, Philipp Alt, et al. 2023. <span>“<span>The German Family Panel (pairfam)Beziehungs- und Familienpanel (pairfam)</span>.”</span> <a href="https://doi.org/10.4232/PAIRFAM.5678.14.1.0">https://doi.org/10.4232/PAIRFAM.5678.14.1.0</a>.
 </div>
 <div id="ref-Callaway.2020" class="csl-entry" role="listitem">
 Callaway, Brantly, and Pedro H. C. Sant’Anna. 2021. <span>“Difference-in-<span>Differences</span> with Multiple Time Periods.”</span> <em>Journal of Econometrics</em> 225 (2): 200–230. <a href="https://doi.org/10.1016/j.jeconom.2020.12.001">https://doi.org/10.1016/j.jeconom.2020.12.001</a>.
@@ -1847,8 +1998,14 @@ Mundlak, Yair. 1978. <span>“On the <span>Pooling</span> of <span>Time Series</
 <div id="ref-Roth.2023" class="csl-entry" role="listitem">
 Roth, Jonathan, Pedro H. C. Sant’Anna, Alyssa Bilinski, and John Poe. 2023. <span>“What’s Trending in Difference-in-Differences? <span>A</span> Synthesis of the Recent Econometrics Literature.”</span> <em>Journal of Econometrics</em> 235 (2): 2218–44. <a href="https://doi.org/10.1016/j.jeconom.2023.03.008">https://doi.org/10.1016/j.jeconom.2023.03.008</a>.
 </div>
+<div id="ref-Ruttenauer.2024" class="csl-entry" role="listitem">
+Rüttenauer, Tobias, and Ozan Aksoy. 2024. <span>“When <span>Can We Use Two-Way Fixed-Effects</span> (<span>TWFE</span>): <span>A Comparison</span> of <span>TWFE</span> and <span class="nocase">Novel Dynamic Difference-in-Differences Estimators</span>.”</span> Preprint. <span>SocArXiv</span>. <a href="https://doi.org/10.31235/osf.io/cpvzf">https://doi.org/10.31235/osf.io/cpvzf</a>.
+</div>
 <div id="ref-Ruttenauer.2021b" class="csl-entry" role="listitem">
 Rüttenauer, Tobias, and Henning Best. 2021. <span>“Environmental <span>Inequality</span> and <span>Residential Sorting</span> in <span>Germany</span>: <span>A Spatial Time-Series Analysis</span> of the <span>Demographic Consequences</span> of <span>Industrial Sites</span>.”</span> <em>Demography</em> 58 (6): 2243–63. <a href="https://doi.org/10.1215/00703370-9563077">https://doi.org/10.1215/00703370-9563077</a>.
+</div>
+<div id="ref-Ruttenauer.2024c" class="csl-entry" role="listitem">
+Rüttenauer, Tobias, and Nicole Kapelle. 2024. <span>“Panel <span>Data Analysis</span>.”</span> <a href="https://doi.org/10.31235/osf.io/3mfzq">https://doi.org/10.31235/osf.io/3mfzq</a>.
 </div>
 <div id="ref-Ruttenauer.2023" class="csl-entry" role="listitem">
 Rüttenauer, Tobias, and Volker Ludwig. 2023. <span>“Fixed <span>Effects Individual Slopes</span>: <span>Accounting</span> and <span>Testing</span> for <span>Heterogeneous Effects</span> in <span>Panel Data</span> or <span>Other Multilevel Models</span>.”</span> <em>Sociological Methods &amp; Research</em> 52 (1): 43–84. <a href="https://doi.org/10.1177/0049124120926211">https://doi.org/10.1177/0049124120926211</a>.

@@ -1,6 +1,6 @@
 ---
 title: "Panel Data Estimators 2"
-author: "Tobias Ruttenauer"
+author: "Tobias Rüttenauer"
 format: 
   revealjs:
     scrollable: true
@@ -767,6 +767,176 @@ zp3
 ```
 
 
+## Differences between estimators
+
+* Disaggregation based estimators
+
+* Imputation based estimators
+
+
+## Disaggregation based estimators {.smaller}
+
+The @Sun.2021 estimator calculates the cohort-specific average treatment effect on the treated $CATT_{e,\ell}$ for $\ell$ periods from the initial treatment and for the cohort of units first treated at time $e$. These cohort-specific and time-specific estimates are the average based on their sample weights. 
+
+### The algorithm 
+
+(1) Estimate $CATT_{e,\ell}$ with a two-way fixed effects estimator that interacts the cohort and relative period indicators
+
+$$
+Y_{i,t}  =\alpha_{i}+\lambda_{t}+\sum_{e\not\in C}\sum_{\ell\neq-1}\delta_{e,\ell}(\mathbf{1}\{E_{i}=e\}\cdot D_{i,t}^{\ell})+\epsilon_{i,t}.
+$$
+
+The control group cohort $C$ can either be the never-treated, or (if they don't exist), @Sun.2021 propose to use the latest-treated cohort as control group. By default, the reference period is the relative period before the treatment $\ell=-1$.
+
+(2) Calculate the sample weights of the cohort within each relative time period $Pr\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}$
+
+(3) Use the estimated coefficients from step 1) $\widehat{\delta}_{e,\ell}$ and the estimated weights from step 2) $\widehat{Pr}\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}$ to calculate the interaction-weighted estimator $\widehat{\nu}_{g}$:
+
+$$
+\widehat{\nu}_{g}=\frac{1}{\left|g\right|}\sum_{\ell\in g}\sum_{e}\widehat{\delta}_{e,\ell}\widehat{Pr}\{E_{i}=e\mid E_{i}\in[-\ell,T-\ell]\}
+$$
+
+This is similar to a 'parametric' (although very flexible) version of @Callaway.2020.
+
+
+
+## Imputation based methods {.smaller}
+
+This comes from [Golub Capital Social Impact Lab ML Tutorial](https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html)
+
+
+### Horizontal Regression and Unconfoundedness literature
+
+The unconfoundedness literature focuses on the **single-treated-period structure** with a **thin matrix ($N \gg T$)**, a substantial number of treated and control units, and imputes the missing potential outcomes using control units with similar lagged outcomes. So $Y_{iT}$ is missing for some $i$ ($N_t$ "treated units") and no missing entries for other units ($N_c = N - N_t$ "control units"):
+
+$$
+Y_{N\times T}=\left(
+\begin{array}{ccccccc}
+  \checkmark  &  \checkmark  &   \checkmark  \\
+\checkmark  &  \checkmark  &   \checkmark  \\
+ \checkmark  &  \checkmark    & {\color{red} ?}  \\
+\checkmark  &  \checkmark     & {\color{red} ?}  \\
+ \checkmark  &  \checkmark  &   \checkmark   \\
+\vdots  & \vdots  &\vdots \\
+ \checkmark  &  \checkmark    &  {\color{red} ?}  \\
+\end{array}
+\right)\hskip1cm  W_{N\times T}=\left(
+\begin{array}{ccccccc}
+  1  &  1  &   1  \\
+1 &  1    & 1  \\
+ 1    &  1     & 0  \\
+1  &  1     & 0  \\
+1   &  1     &  1   \\
+\vdots  & \vdots  &\vdots \\
+1    &  1    &  0  \\
+\end{array}
+\right)
+$$
+
+For treated units, the predicted outcome is:
+
+$$
+\hat Y_{iT}=\hat \beta_0+\sum_{s=1}^{T-1} \hat \beta_s Y_{Nt}, 
+$$
+
+where
+
+$$
+\hat\beta= \arg\min_{\beta} \sum_{i:(i,T)\in \cal{O}}(Y_{iT}-\beta_0-\sum_{s=1}^{T-1}\beta_s Y_{is})^2.
+$$
+
+A simple version of the unconfoundedness approach is to regress the last period outcome on the lagged outcomes. A more advances version would be matching.
+
+### Vertical Regression and the Synthetic Control literature
+
+The **synthetic control** methods  focus primarily on **the single-treated-unit block structure** with a relatively fat ($T\gg N$) or approximately square ($T\approx N$) matrix. $Y_{Nt}$ is missing for $t \geq T_0$ and there are no missing entries for other units:
+
+$$
+Y_{N\times T}=\left(
+\begin{array}{ccccccc}
+ \checkmark & \checkmark   & \checkmark  & \dots & \checkmark \\
+\checkmark  & \checkmark & \checkmark   & \dots & \checkmark  \\
+\checkmark  & \checkmark  & {\color{red} ?}  & \dots & {\color{red} ?}  \\
+\end{array}
+\right)\hskip0.5cm 
+W_{N\times T}=\left(
+\begin{array}{ccccccc}
+1 & 1 & 1  & \dots & 1 \\
+1  & 1 & 1   & \dots & 1  \\
+1  & 1  & 0  & \dots & 0  \\
+\end{array}
+\right)
+$$
+
+
+For the treated unit in period $t$, for $t=T_0, ..., T$, the predicted outcome is: 
+
+$$
+\hat Y_{Nt}=\hat \omega_0+\sum_{i=1}^{N-1} \hat \omega_i Y_{it}
+$$
+
+where
+
+$$
+\hat\omega= \arg\min_{\omega} \sum_{t:(N,t)\in \cal{O}}(Y_{Nt}-\omega_0-\sum_{i=1}^{N-1}\omega_i Y_{is})^2.
+$$
+
+See @Athey.2021
+
+## Borusyak DiD imputation {visibility="uncounted"  .smaller .scrollable}
+
+We start with the assumption that we can write the underlying model as:
+
+$$
+Y_{it} = A_{it}^{'}\lambda_i + X_{it}^{'}\delta + D_{it}^{'}\Gamma_{it}^{'}\theta + \varepsilon_{it}  
+$$
+
+-  where $A_{it}^{'}\lambda_i$ contains unit FEs, but also allows to interact them with some observed covariates unaffected by the treatment status
+-  and $X_{it}^{'}\delta$ nests period FEs but additionally allows any time-varying covariates,
+-  $\lambda_i$ is a vector of unit-specific nuisance parameters,
+-  and $\delta$ is a vector of nuisance parameters associated with common covariates.
+
+### The algorithm
+
+(1) For every treated observation, estimate expected untreated potential outcomes $A_{it}^{'}\lambda_i + X_{it}^{'}\delta$ by some unbiased linear estimator $\hat Y_{it}(0)$ using data from the untreated observations only,
+(2) For each treated observation ($\in\Omega_1$), set $\hat\tau_{it} = Y_{it} - \hat{Y}_{it}(0)$, 
+(3) Estimate the target by a weighted sum $\hat\tau = \sum_{it\in\Omega_1}w_{it}\hat\tau_{it}$.
+
+See @Borusyak.2021.
+
+Note that this uses all pre-treatment periods (also those further away) for imputation of the counterfactual.
+
+
+## Differences
+
+![@Ruttenauer.2024](fig/New_ATT_combined_00.png)
+
+
+## Differences
+
+![@Ruttenauer.2024](fig/New_ATT_combined.png)
+
+
+## Example 2: Marriage and satisfaction with sex life 
+
+We use 13 waves of panel data from the Panel Analysis of Intimate Relationships and Family Dynamics (pairfam) survey, release 14.1 [@Bruederl.2023], to examine how the transition into first marriage is associated with changes in respondents' sexual satisfaction.
+
+See @Ruttenauer.2024c for more information
+
+
+
+## Example 2: Marriage and satisfaction with sex life 
+
+![Example from @Ruttenauer.2024c](fig/Coefplot.jpeg)
+
+
+
+## Example 2: Marriage and satisfaction with sex life 
+
+
+![Example from @Ruttenauer.2024c](fig/Dynamic.jpeg)
+
+
 # Fixed Effects Individual Slopes
 
 ## Parallel trends
@@ -974,5 +1144,13 @@ Overall, this indicates that there is a problem with non-parallel trends: Those 
 
 As mentioned above, we can achieve the same by 1) manually calculating the individual specific trends and 2) including them as additional covariates in the model.
 
+
+## The biggest limitations {.smaller}
+
+* It is crucial to model the trends correctly
+
+* You need $k+1$ time-periods per unit to estimate the trend based on $k$ variables (related to selection?)
+
+* With dynamic treatment effects (which are not specified in your model), the individual trends may absorb the unfolding treatment effect
 
 ## References
