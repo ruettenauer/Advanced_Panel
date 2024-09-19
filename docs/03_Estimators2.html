@@ -523,62 +523,59 @@ Tobias Rüttenauer
 </section>
 <section id="dummy-impact-function-2" class="slide level2">
 <h2>Dummy impact function</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-4_45f4434b45358359890abdb6724ee637">
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-4_b34c04a1dfa7c39f03a8ccbf835ccd8a">
 <div class="sourceCode cell-code" id="cb5" data-code-line-numbers="1-2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Create event time indicator</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span> mwp<span class="sc">$</span>year <span class="sc">-</span> mwp<span class="sc">$</span>Treat_first</span>
 <span id="cb5-3"><a href="#cb5-3"></a></span>
 <span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Define reference periods (use minus 2 to allow for anticipation in -1)</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co"># control &lt;- c(-2, min(mwp$time_to_treatment)) </span></span>
-<span id="cb5-6"><a href="#cb5-6"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>)</span>
-<span id="cb5-7"><a href="#cb5-7"></a></span>
-<span id="cb5-8"><a href="#cb5-8"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a>  <span class="fu">ifelse</span>(</span>
-<span id="cb5-10"><a href="#cb5-10"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
-<span id="cb5-11"><a href="#cb5-11"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
-<span id="cb5-12"><a href="#cb5-12"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
-<span id="cb5-13"><a href="#cb5-13"></a>  )</span>
-<span id="cb5-14"><a href="#cb5-14"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="fu">min</span>(mwp<span class="sc">$</span>time_to_treatment)) </span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>  <span class="fu">ifelse</span>(</span>
+<span id="cb5-9"><a href="#cb5-9"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
+<span id="cb5-10"><a href="#cb5-10"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
+<span id="cb5-11"><a href="#cb5-11"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
+<span id="cb5-12"><a href="#cb5-12"></a>  )</span>
+<span id="cb5-13"><a href="#cb5-13"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dummy-impact-function-3" class="slide level2">
 <h2>Dummy impact function</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-5_caf07efdcfa0eec6a719cd7d221d69b5">
-<div class="sourceCode cell-code" id="cb6" data-code-line-numbers="4-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Create event time indicator</span></span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-5_11962be8eda7f20713935772e7ce0222">
+<div class="sourceCode cell-code" id="cb6" data-code-line-numbers="4-5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Create event time indicator</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span> mwp<span class="sc">$</span>year <span class="sc">-</span> mwp<span class="sc">$</span>Treat_first</span>
 <span id="cb6-3"><a href="#cb6-3"></a></span>
 <span id="cb6-4"><a href="#cb6-4"></a><span class="co"># Define reference periods (use minus 2 to allow for anticipation in -1)</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># control &lt;- c(-2, min(mwp$time_to_treatment)) </span></span>
-<span id="cb6-6"><a href="#cb6-6"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>)</span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>  <span class="fu">ifelse</span>(</span>
-<span id="cb6-10"><a href="#cb6-10"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
-<span id="cb6-11"><a href="#cb6-11"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
-<span id="cb6-12"><a href="#cb6-12"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
-<span id="cb6-13"><a href="#cb6-13"></a>  )</span>
-<span id="cb6-14"><a href="#cb6-14"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="fu">min</span>(mwp<span class="sc">$</span>time_to_treatment)) </span>
+<span id="cb6-6"><a href="#cb6-6"></a></span>
+<span id="cb6-7"><a href="#cb6-7"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>  <span class="fu">ifelse</span>(</span>
+<span id="cb6-9"><a href="#cb6-9"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
+<span id="cb6-11"><a href="#cb6-11"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
+<span id="cb6-12"><a href="#cb6-12"></a>  )</span>
+<span id="cb6-13"><a href="#cb6-13"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dummy-impact-function-4" class="slide level2">
 <h2>Dummy impact function</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-6_90e1592c759f2de0277f9b31a40c3cfe">
-<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="8-15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Create event time indicator</span></span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-6_f02c77aaaa5d8e14f22155820714e44e">
+<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="7-14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Create event time indicator</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span> mwp<span class="sc">$</span>year <span class="sc">-</span> mwp<span class="sc">$</span>Treat_first</span>
 <span id="cb7-3"><a href="#cb7-3"></a></span>
 <span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Define reference periods (use minus 2 to allow for anticipation in -1)</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># control &lt;- c(-2, min(mwp$time_to_treatment)) </span></span>
-<span id="cb7-6"><a href="#cb7-6"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>)</span>
-<span id="cb7-7"><a href="#cb7-7"></a></span>
-<span id="cb7-8"><a href="#cb7-8"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a>  <span class="fu">ifelse</span>(</span>
-<span id="cb7-10"><a href="#cb7-10"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
-<span id="cb7-11"><a href="#cb7-11"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
-<span id="cb7-12"><a href="#cb7-12"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
-<span id="cb7-13"><a href="#cb7-13"></a>  )</span>
-<span id="cb7-14"><a href="#cb7-14"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
-<span id="cb7-15"><a href="#cb7-15"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-5"><a href="#cb7-5"></a>control <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="fu">min</span>(mwp<span class="sc">$</span>time_to_treatment)) </span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>  <span class="fu">ifelse</span>(</span>
+<span id="cb7-9"><a href="#cb7-9"></a>    mwp<span class="sc">$</span>time_to_treatment <span class="sc">%in%</span> control <span class="sc">|</span> mwp<span class="sc">$</span>Treat_first <span class="sc">==</span> <span class="dv">0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10"></a>    <span class="sc">-</span><span class="dv">9999</span>,</span>
+<span id="cb7-11"><a href="#cb7-11"></a>    mwp<span class="sc">$</span>time_to_treatment</span>
+<span id="cb7-12"><a href="#cb7-12"></a>  )</span>
+<span id="cb7-13"><a href="#cb7-13"></a>mwp<span class="sc">$</span>time_to_treatment <span class="ot">&lt;-</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>  <span class="fu">relevel</span>(<span class="fu">as.factor</span>(mwp<span class="sc">$</span>time_to_treatment), <span class="st">"-9999"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dummy-impact-function-5" class="slide level2">
@@ -703,7 +700,7 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 </section>
 <section id="fe-with-dummy-impact-function-3" class="slide level2">
 <h2>FE with Dummy impact function</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-11_ca987272c02556e8fcadd28e88ffc273">
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-11_260ab3d3f06bf49a60754bf6b5720293">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Adjusting the results matrix setup to include all marcount levels</span></span>
@@ -772,6 +769,11 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb14-64"><a href="#cb14-64"></a>zp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># save mwp</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>mwp_new <span class="ot">&lt;-</span> mwp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <img data-src="03_Estimators2_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"></section></section>
 <section>
@@ -827,7 +829,7 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <section id="potential-solutions" class="slide level2">
 <h2>Potential solutions</h2>
 <p>Several authors have proposed solutions <span class="citation" data-cites="Callaway.2020 DeChaisemartin.2020 Borusyak.2023 Sun.2021 Wooldridge.2021">(<a href="#/references" role="doc-biblioref" onclick="">Callaway and Sant’Anna 2021</a>; <a href="#/references" role="doc-biblioref" onclick="">De Chaisemartin and D’Haultfœuille 2020</a>; <a href="#/references" role="doc-biblioref" onclick="">Borusyak, Jaravel, and Spiess 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Sun and Abraham 2021</a>; <a href="#/references" role="doc-biblioref" onclick="">Wooldridge 2021</a>)</span> by using dynamic Difference-in-Differences estimators.</p>
-<p>For a review of these estimators, see, for instance, <span class="citation" data-cites="Roth.2023">Roth et al. (<a href="#/references" role="doc-biblioref" onclick="">2023</a>)</span> or Ruttenauer.2024.</p>
+<p>For a review of these estimators, see, for instance, <span class="citation" data-cites="Roth.2023">Roth et al. (<a href="#/references" role="doc-biblioref" onclick="">2023</a>)</span> or <span class="citation" data-cites="Ruttenauer.2024">Rüttenauer and Aksoy (<a href="#/references" role="doc-biblioref" onclick="">2024</a>)</span>.</p>
 </section>
 <section id="potential-solutions-1" class="slide level2">
 <h2>Potential solutions</h2>
@@ -904,9 +906,9 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <section id="example---marriage-and-wage-2" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-12_d3dfba6cbce26d0200e86753d9f1d5cc">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">library</span>(feisr)</span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="fu">data</span>(<span class="st">"mwp"</span>, <span class="at">package =</span> <span class="st">"feisr"</span>)</span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="fu">head</span>(mwp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="fu">library</span>(feisr)</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="fu">data</span>(<span class="st">"mwp"</span>, <span class="at">package =</span> <span class="st">"feisr"</span>)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="fu">head</span>(mwp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id year      lnw      exp      expq marry evermarry enrol yeduc age cohort
 1  1 1981 1.934358 1.076923  1.159763     0         1     1    11  18   1963
@@ -928,22 +930,7 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <section id="example---marriage-and-wage-3" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-13_82d844a99eaee3ed0e637a063694c235">
-<div class="sourceCode cell-code" id="cb17" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># treatment timing = year if married</span></span>
-<span id="cb17-2"><a href="#cb17-2"></a>mwp<span class="sc">$</span>treat_timing <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>marry <span class="sc">==</span> <span class="dv">1</span>, mwp<span class="sc">$</span>year, <span class="cn">NA</span>)</span>
-<span id="cb17-3"><a href="#cb17-3"></a></span>
-<span id="cb17-4"><a href="#cb17-4"></a><span class="co"># set never treated to zero</span></span>
-<span id="cb17-5"><a href="#cb17-5"></a>mwp<span class="sc">$</span>treat_timing[mwp<span class="sc">$</span>evermarry <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb17-6"><a href="#cb17-6"></a></span>
-<span id="cb17-7"><a href="#cb17-7"></a><span class="co"># if married is not NA, used min year per id (removing NAs)</span></span>
-<span id="cb17-8"><a href="#cb17-8"></a>mwp<span class="sc">$</span>treat_timing[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)] <span class="ot">&lt;-</span> <span class="fu">ave</span>(mwp<span class="sc">$</span>treat_timing[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)],</span>
-<span id="cb17-9"><a href="#cb17-9"></a>                                           mwp<span class="sc">$</span>id[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)],</span>
-<span id="cb17-10"><a href="#cb17-10"></a>                                           <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="example---marriage-and-wage-4" class="slide level2">
-<h2>Example - Marriage and wage</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-14_e2b6d5a8bc0af1e7454daa7502767f71">
-<div class="sourceCode cell-code" id="cb18" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># treatment timing = year if married</span></span>
+<div class="sourceCode cell-code" id="cb18" data-code-line-numbers="2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># treatment timing = year if married</span></span>
 <span id="cb18-2"><a href="#cb18-2"></a>mwp<span class="sc">$</span>treat_timing <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>marry <span class="sc">==</span> <span class="dv">1</span>, mwp<span class="sc">$</span>year, <span class="cn">NA</span>)</span>
 <span id="cb18-3"><a href="#cb18-3"></a></span>
 <span id="cb18-4"><a href="#cb18-4"></a><span class="co"># set never treated to zero</span></span>
@@ -955,10 +942,10 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb18-10"><a href="#cb18-10"></a>                                           <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="example---marriage-and-wage-5" class="slide level2">
+<section id="example---marriage-and-wage-4" class="slide level2">
 <h2>Example - Marriage and wage</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-15_3ebaa929bb4cf69c3a8e89d704b53822">
-<div class="sourceCode cell-code" id="cb19" data-code-line-numbers="8-10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># treatment timing = year if married</span></span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-14_e2b6d5a8bc0af1e7454daa7502767f71">
+<div class="sourceCode cell-code" id="cb19" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># treatment timing = year if married</span></span>
 <span id="cb19-2"><a href="#cb19-2"></a>mwp<span class="sc">$</span>treat_timing <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>marry <span class="sc">==</span> <span class="dv">1</span>, mwp<span class="sc">$</span>year, <span class="cn">NA</span>)</span>
 <span id="cb19-3"><a href="#cb19-3"></a></span>
 <span id="cb19-4"><a href="#cb19-4"></a><span class="co"># set never treated to zero</span></span>
@@ -970,10 +957,25 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb19-10"><a href="#cb19-10"></a>                                           <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="example---marriage-and-wage-5" class="slide level2">
+<h2>Example - Marriage and wage</h2>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-15_3ebaa929bb4cf69c3a8e89d704b53822">
+<div class="sourceCode cell-code" id="cb20" data-code-line-numbers="8-10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># treatment timing = year if married</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>mwp<span class="sc">$</span>treat_timing <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>marry <span class="sc">==</span> <span class="dv">1</span>, mwp<span class="sc">$</span>year, <span class="cn">NA</span>)</span>
+<span id="cb20-3"><a href="#cb20-3"></a></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co"># set never treated to zero</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a>mwp<span class="sc">$</span>treat_timing[mwp<span class="sc">$</span>evermarry <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb20-6"><a href="#cb20-6"></a></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="co"># if married is not NA, used min year per id (removing NAs)</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a>mwp<span class="sc">$</span>treat_timing[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)] <span class="ot">&lt;-</span> <span class="fu">ave</span>(mwp<span class="sc">$</span>treat_timing[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)],</span>
+<span id="cb20-9"><a href="#cb20-9"></a>                                           mwp<span class="sc">$</span>id[<span class="sc">!</span><span class="fu">is.na</span>(mwp<span class="sc">$</span>marry)],</span>
+<span id="cb20-10"><a href="#cb20-10"></a>                                           <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="example---marriage-and-wage-6" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-16_3e4086a43b4d7fe5edced8875ac95dee">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">head</span>(mwp[, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"marry"</span>, <span class="st">"evermarry"</span>, <span class="st">"treat_timing"</span>)], <span class="at">n =</span> <span class="dv">35</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="fu">head</span>(mwp[, <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"marry"</span>, <span class="st">"evermarry"</span>, <span class="st">"treat_timing"</span>)], <span class="at">n =</span> <span class="dv">35</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   id year marry evermarry treat_timing
 1   1 1981     0         1         1988
@@ -1017,46 +1019,27 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <section id="example---marriage-and-wage-7" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>Using the package <code>did</code>.</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-17_db5a8a404b7e54f00737b4c3fff61ca2">
-<div class="sourceCode cell-code" id="cb22" data-code-line-numbers="3-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">library</span>(did)</span>
-<span id="cb22-2"><a href="#cb22-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
-<span id="cb22-3"><a href="#cb22-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
-<span id="cb22-4"><a href="#cb22-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
-<span id="cb22-5"><a href="#cb22-5"></a>                      <span class="at">idname =</span> <span class="st">"id"</span>,</span>
-<span id="cb22-6"><a href="#cb22-6"></a>                      <span class="at">gname =</span> <span class="st">"treat_timing"</span>,</span>
-<span id="cb22-7"><a href="#cb22-7"></a>                      <span class="at">xformla =</span> <span class="sc">~</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), <span class="co"># note that we omit the yeargroup here</span></span>
-<span id="cb22-8"><a href="#cb22-8"></a>                      <span class="at">data =</span> mwp,</span>
-<span id="cb22-9"><a href="#cb22-9"></a>                      <span class="at">control_group =</span> <span class="st">"notyettreated"</span>,</span>
-<span id="cb22-10"><a href="#cb22-10"></a>                      <span class="at">anticipation =</span> <span class="dv">0</span>,</span>
-<span id="cb22-11"><a href="#cb22-11"></a>                      <span class="at">allow_unbalanced_panel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb22-12"><a href="#cb22-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span></span>
-<span id="cb22-13"><a href="#cb22-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-17_f0fd975dbd395f0335b42b9da1cb17b2">
+<div class="sourceCode cell-code" id="cb23" data-code-line-numbers="3-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">library</span>(did)</span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
+<span id="cb23-4"><a href="#cb23-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5"></a>                      <span class="at">idname =</span> <span class="st">"id"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6"></a>                      <span class="at">gname =</span> <span class="st">"treat_timing"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7"></a>                      <span class="at">xformla =</span> <span class="sc">~</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb23-8"><a href="#cb23-8"></a>                      <span class="at">data =</span> mwp,</span>
+<span id="cb23-9"><a href="#cb23-9"></a>                      <span class="at">control_group =</span> <span class="st">"notyettreated"</span>,</span>
+<span id="cb23-10"><a href="#cb23-10"></a>                      <span class="at">anticipation =</span> <span class="dv">0</span>,</span>
+<span id="cb23-11"><a href="#cb23-11"></a>                      <span class="at">allow_unbalanced_panel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb23-12"><a href="#cb23-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span></span>
+<span id="cb23-13"><a href="#cb23-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example---marriage-and-wage-8" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>Using the package <code>did</code>.</p>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-18_6d82a16a3e8feb2be70d48e8779247d5">
-<div class="sourceCode cell-code" id="cb23" data-code-line-numbers="7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">library</span>(did)</span>
-<span id="cb23-2"><a href="#cb23-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
-<span id="cb23-3"><a href="#cb23-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
-<span id="cb23-4"><a href="#cb23-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
-<span id="cb23-5"><a href="#cb23-5"></a>                      <span class="at">idname =</span> <span class="st">"id"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6"></a>                      <span class="at">gname =</span> <span class="st">"treat_timing"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7"></a>                      <span class="at">xformla =</span> <span class="sc">~</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), <span class="co"># note that we omit the yeargroup here</span></span>
-<span id="cb23-8"><a href="#cb23-8"></a>                      <span class="at">data =</span> mwp,</span>
-<span id="cb23-9"><a href="#cb23-9"></a>                      <span class="at">control_group =</span> <span class="st">"notyettreated"</span>,</span>
-<span id="cb23-10"><a href="#cb23-10"></a>                      <span class="at">anticipation =</span> <span class="dv">0</span>,</span>
-<span id="cb23-11"><a href="#cb23-11"></a>                      <span class="at">allow_unbalanced_panel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb23-12"><a href="#cb23-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span>,</span>
-<span id="cb23-13"><a href="#cb23-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="example---marriage-and-wage-9" class="slide level2">
-<h2>Example - Marriage and wage</h2>
-<p>Using the package <code>did</code>.</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-19_00c937284c5fead7e36ebbc57f4cddd7">
-<div class="sourceCode cell-code" id="cb24" data-code-line-numbers="9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">library</span>(did)</span>
+<div class="sourceCode cell-code" id="cb24" data-code-line-numbers="7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a><span class="fu">library</span>(did)</span>
 <span id="cb24-2"><a href="#cb24-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
 <span id="cb24-3"><a href="#cb24-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
 <span id="cb24-4"><a href="#cb24-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
@@ -1067,15 +1050,15 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb24-9"><a href="#cb24-9"></a>                      <span class="at">control_group =</span> <span class="st">"notyettreated"</span>,</span>
 <span id="cb24-10"><a href="#cb24-10"></a>                      <span class="at">anticipation =</span> <span class="dv">0</span>,</span>
 <span id="cb24-11"><a href="#cb24-11"></a>                      <span class="at">allow_unbalanced_panel =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb24-12"><a href="#cb24-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span></span>
+<span id="cb24-12"><a href="#cb24-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span>,</span>
 <span id="cb24-13"><a href="#cb24-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="example---marriage-and-wage-10" class="slide level2">
+<section id="example---marriage-and-wage-9" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>Using the package <code>did</code>.</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-20_fa2df94b69e9d9fcf3c014172f14c553">
-<div class="sourceCode cell-code" id="cb25" data-code-line-numbers="10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">library</span>(did)</span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-19_00c937284c5fead7e36ebbc57f4cddd7">
+<div class="sourceCode cell-code" id="cb25" data-code-line-numbers="9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a><span class="fu">library</span>(did)</span>
 <span id="cb25-2"><a href="#cb25-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
 <span id="cb25-3"><a href="#cb25-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
 <span id="cb25-4"><a href="#cb25-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
@@ -1090,11 +1073,11 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb25-13"><a href="#cb25-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="example---marriage-and-wage-11" class="slide level2">
+<section id="example---marriage-and-wage-10" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>Using the package <code>did</code>.</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-21_cab4dbe2fbacdd8bc0fb3b202e2e4c7c">
-<div class="sourceCode cell-code" id="cb26" data-code-line-numbers="11-12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">library</span>(did)</span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-20_fa2df94b69e9d9fcf3c014172f14c553">
+<div class="sourceCode cell-code" id="cb26" data-code-line-numbers="10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">library</span>(did)</span>
 <span id="cb26-2"><a href="#cb26-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
 <span id="cb26-3"><a href="#cb26-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
 <span id="cb26-4"><a href="#cb26-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
@@ -1109,12 +1092,31 @@ F-statistic: 7.31333 on 37 and 2777 DF, p-value: &lt; 2.22e-16</code></pre>
 <span id="cb26-13"><a href="#cb26-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="example---marriage-and-wage-11" class="slide level2">
+<h2>Example - Marriage and wage</h2>
+<p>Using the package <code>did</code>.</p>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-21_cab4dbe2fbacdd8bc0fb3b202e2e4c7c">
+<div class="sourceCode cell-code" id="cb27" data-code-line-numbers="11-12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">library</span>(did)</span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="co"># estimate group-time average treatment effects using att_gt method</span></span>
+<span id="cb27-3"><a href="#cb27-3"></a>wages.attgt <span class="ot">&lt;-</span> <span class="fu">att_gt</span>(<span class="at">yname =</span> <span class="st">"lnw"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4"></a>                      <span class="at">tname =</span> <span class="st">"year"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5"></a>                      <span class="at">idname =</span> <span class="st">"id"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6"></a>                      <span class="at">gname =</span> <span class="st">"treat_timing"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7"></a>                      <span class="at">xformla =</span> <span class="sc">~</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), <span class="co"># note that we omit the yeargroup here</span></span>
+<span id="cb27-8"><a href="#cb27-8"></a>                      <span class="at">data =</span> mwp,</span>
+<span id="cb27-9"><a href="#cb27-9"></a>                      <span class="at">control_group =</span> <span class="st">"notyettreated"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10"></a>                      <span class="at">anticipation =</span> <span class="dv">0</span>,</span>
+<span id="cb27-11"><a href="#cb27-11"></a>                      <span class="at">allow_unbalanced_panel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-12"><a href="#cb27-12"></a>                      <span class="at">est_method =</span> <span class="st">"ipw"</span></span>
+<span id="cb27-13"><a href="#cb27-13"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="example---marriage-and-wage-12" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>And we get a lot of individual treatment effects.</p>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-22_5a918e346bab15dcbec91aa303e100f9">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="co"># Show the group-time specific estimates</span></span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="fu">summary</span>(wages.attgt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a><span class="co"># Show the group-time specific estimates</span></span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="fu">summary</span>(wages.attgt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1443,75 +1445,11 @@ Estimation Method:  Inverse Probability Weighting</code></pre>
 </section>
 <section id="example---marriage-and-wage-13" class="slide level2">
 <h2>Example - Marriage and wage</h2>
-<p>These individual effects are similar to running a lot of individual regressions, where we compute a lot of individual <span class="math inline">\(2 \times 2\)</span> DD estimators, e.g.&nbsp;for group 1981:</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-23_8a1ebf8bca7879af780078da3d0c624e">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>t <span class="ot">&lt;-</span> <span class="dv">1981</span></span>
-<span id="cb29-2"><a href="#cb29-2"></a></span>
-<span id="cb29-3"><a href="#cb29-3"></a><span class="co"># run individual effects</span></span>
-<span id="cb29-4"><a href="#cb29-4"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">sort</span>(<span class="fu">unique</span>(mwp<span class="sc">$</span>year))[<span class="sc">-</span><span class="dv">1</span>]){</span>
-<span id="cb29-5"><a href="#cb29-5"></a>  </span>
-<span id="cb29-6"><a href="#cb29-6"></a>  <span class="co"># not yet treated</span></span>
-<span id="cb29-7"><a href="#cb29-7"></a>  mwp<span class="sc">$</span>notyettreated <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>treat_timing <span class="sc">&gt;</span> t <span class="sc">&amp;</span> mwp<span class="sc">$</span>treat_timing <span class="sc">&gt;</span> i, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb29-8"><a href="#cb29-8"></a>  </span>
-<span id="cb29-9"><a href="#cb29-9"></a>  <span class="co"># select 1980 group, never-treated and not yet treated</span></span>
-<span id="cb29-10"><a href="#cb29-10"></a>  oo <span class="ot">&lt;-</span> <span class="fu">which</span>(mwp<span class="sc">$</span>treat_timing <span class="sc">==</span> t <span class="sc">|</span> mwp<span class="sc">$</span>treat_timing <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> mwp<span class="sc">$</span>notyettreated <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb29-11"><a href="#cb29-11"></a>  df <span class="ot">&lt;-</span> mwp[oo, ]</span>
-<span id="cb29-12"><a href="#cb29-12"></a>  </span>
-<span id="cb29-13"><a href="#cb29-13"></a>  <span class="co"># after set to 1 for year rolling year i</span></span>
-<span id="cb29-14"><a href="#cb29-14"></a>  df<span class="sc">$</span>after <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb29-15"><a href="#cb29-15"></a>  df<span class="sc">$</span>after[df<span class="sc">$</span>year <span class="sc">==</span> i] <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
-<span id="cb29-16"><a href="#cb29-16"></a>  </span>
-<span id="cb29-17"><a href="#cb29-17"></a>  <span class="co"># control year</span></span>
-<span id="cb29-18"><a href="#cb29-18"></a>  <span class="cf">if</span>(i <span class="sc">&lt;</span> t){</span>
-<span id="cb29-19"><a href="#cb29-19"></a>    <span class="co"># if i is still before actual treatment, compare to previous year</span></span>
-<span id="cb29-20"><a href="#cb29-20"></a>    tc <span class="ot">&lt;-</span> i <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb29-21"><a href="#cb29-21"></a>  }<span class="cf">else</span>{</span>
-<span id="cb29-22"><a href="#cb29-22"></a>    <span class="co"># if i is beyond actual treatment, compare to year before actual treatment (t-1)</span></span>
-<span id="cb29-23"><a href="#cb29-23"></a>    tc <span class="ot">&lt;-</span> t <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb29-24"><a href="#cb29-24"></a>  }</span>
-<span id="cb29-25"><a href="#cb29-25"></a>  df<span class="sc">$</span>after[df<span class="sc">$</span>year <span class="sc">==</span> tc] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb29-26"><a href="#cb29-26"></a>  </span>
-<span id="cb29-27"><a href="#cb29-27"></a>  <span class="co"># Restrict to the two years we want to compare</span></span>
-<span id="cb29-28"><a href="#cb29-28"></a>  df <span class="ot">&lt;-</span> df[<span class="sc">!</span><span class="fu">is.na</span>(df<span class="sc">$</span>after), ]</span>
-<span id="cb29-29"><a href="#cb29-29"></a>  </span>
-<span id="cb29-30"><a href="#cb29-30"></a>  <span class="co"># Define treated group</span></span>
-<span id="cb29-31"><a href="#cb29-31"></a>  df<span class="sc">$</span>treat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(df<span class="sc">$</span>treat_timing <span class="sc">==</span> t, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb29-32"><a href="#cb29-32"></a>  </span>
-<span id="cb29-33"><a href="#cb29-33"></a>  <span class="co"># Estiamte 2x2 DD</span></span>
-<span id="cb29-34"><a href="#cb29-34"></a>  tmp.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(lnw <span class="sc">~</span> treat<span class="sc">*</span>after, <span class="at">data =</span> df)</span>
-<span id="cb29-35"><a href="#cb29-35"></a>  </span>
-<span id="cb29-36"><a href="#cb29-36"></a>  <span class="co"># Print</span></span>
-<span id="cb29-37"><a href="#cb29-37"></a>  <span class="fu">print</span>(<span class="fu">paste0</span>(i, <span class="st">": "</span>, <span class="fu">round</span>(tmp.lm<span class="sc">$</span>coefficients[<span class="dv">4</span>], <span class="dv">4</span>)))</span>
-<span id="cb29-38"><a href="#cb29-38"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "1980: -0.1289"
-[1] "1981: 0.049"
-[1] "1982: 0.1016"
-[1] "1983: -0.0413"
-[1] "1984: 0.0303"
-[1] "1985: -0.07"
-[1] "1986: -0.1021"
-[1] "1987: -0.0572"
-[1] "1988: -0.0552"
-[1] "1989: -0.1644"
-[1] "1990: -0.131"
-[1] "1991: -0.229"
-[1] "1992: -0.0732"
-[1] "1993: 0.0749"
-[1] "1994: -0.1662"
-[1] "1996: NA"
-[1] "1998: NA"
-[1] "2000: NA"</code></pre>
-</div>
-</div>
-</section>
-<section id="example---marriage-and-wage-14" class="slide level2">
-<h2>Example - Marriage and wage</h2>
 <p>To make this more interpretable, we re-aggregate the individuals results to a dynamic time-averaged effect (we now restrict this to observations from -3 to 6).</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-24_d0938d58f210d3883fe18676280438dd">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>wages.dyn <span class="ot">&lt;-</span> <span class="fu">aggte</span>(wages.attgt, <span class="at">type =</span> <span class="st">"dynamic"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb31-2"><a href="#cb31-2"></a>                   <span class="at">min_e =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">max_e =</span> <span class="dv">6</span>)</span>
-<span id="cb31-3"><a href="#cb31-3"></a><span class="fu">summary</span>(wages.dyn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-23_84a24df345ff060e28410b8c9ddba4d7">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>wages.dyn <span class="ot">&lt;-</span> <span class="fu">aggte</span>(wages.attgt, <span class="at">type =</span> <span class="st">"dynamic"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-2"><a href="#cb30-2"></a>                   <span class="at">min_e =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">max_e =</span> <span class="dv">6</span>)</span>
+<span id="cb30-3"><a href="#cb30-3"></a><span class="fu">summary</span>(wages.dyn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1546,25 +1484,90 @@ Estimation Method:  Inverse Probability Weighting</code></pre>
 </div>
 </div>
 </section>
-<section id="example---marriage-and-wage-15" class="slide level2">
+<section id="example---marriage-and-wage-14" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 <p>The <code>did</code> package also comes with a handy command <code>ggdid()</code> to plot the results</p>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-25_ea7137056f5ad82c65be6643ea8509a4">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>zp3 <span class="ot">&lt;-</span> <span class="fu">ggdid</span>(wages.dyn) </span>
-<span id="cb33-2"><a href="#cb33-2"></a>  </span>
-<span id="cb33-3"><a href="#cb33-3"></a>zp3 <span class="ot">&lt;-</span> zp3 <span class="sc">+</span> </span>
-<span id="cb33-4"><a href="#cb33-4"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="fu">gray</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>), <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb33-5"><a href="#cb33-5"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
-<span id="cb33-6"><a href="#cb33-6"></a></span>
-<span id="cb33-7"><a href="#cb33-7"></a>zp3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-24_43c6cb131570b88d14555f27b9b16ac8">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>zp3 <span class="ot">&lt;-</span> <span class="fu">ggdid</span>(wages.dyn) </span>
+<span id="cb32-2"><a href="#cb32-2"></a>  </span>
+<span id="cb32-3"><a href="#cb32-3"></a>zp3 <span class="ot">&lt;-</span> zp3 <span class="sc">+</span> </span>
+<span id="cb32-4"><a href="#cb32-4"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="fu">gray</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>), <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span>
+<span id="cb32-6"><a href="#cb32-6"></a></span>
+<span id="cb32-7"><a href="#cb32-7"></a>zp3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="example---marriage-and-wage-16" class="slide level2">
+<section id="example---marriage-and-wage-15" class="slide level2">
 <h2>Example - Marriage and wage</h2>
 
-<img data-src="03_Estimators2_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<img data-src="03_Estimators2_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
+<section id="you-could-do-it-in-a-loop" class="slide level2">
+<h2>You could do it in a loop</h2>
+<p>These individual effects are similar to running a lot of individual regressions, where we compute a lot of individual <span class="math inline">\(2 \times 2\)</span> DD estimators, e.g.&nbsp;for group 1981:</p>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-26_8f5d4d67f2370854508f81104660dea8">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a>t <span class="ot">&lt;-</span> <span class="dv">1981</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a></span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="co"># run individual effects</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">sort</span>(<span class="fu">unique</span>(mwp<span class="sc">$</span>year))[<span class="sc">-</span><span class="dv">1</span>]){</span>
+<span id="cb33-5"><a href="#cb33-5"></a>  </span>
+<span id="cb33-6"><a href="#cb33-6"></a>  <span class="co"># not yet treated</span></span>
+<span id="cb33-7"><a href="#cb33-7"></a>  mwp<span class="sc">$</span>notyettreated <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(mwp<span class="sc">$</span>treat_timing <span class="sc">&gt;</span> t <span class="sc">&amp;</span> mwp<span class="sc">$</span>treat_timing <span class="sc">&gt;</span> i, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb33-8"><a href="#cb33-8"></a>  </span>
+<span id="cb33-9"><a href="#cb33-9"></a>  <span class="co"># select 1980 group, never-treated and not yet treated</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a>  oo <span class="ot">&lt;-</span> <span class="fu">which</span>(mwp<span class="sc">$</span>treat_timing <span class="sc">==</span> t <span class="sc">|</span> mwp<span class="sc">$</span>treat_timing <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> mwp<span class="sc">$</span>notyettreated <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb33-11"><a href="#cb33-11"></a>  df <span class="ot">&lt;-</span> mwp[oo, ]</span>
+<span id="cb33-12"><a href="#cb33-12"></a>  </span>
+<span id="cb33-13"><a href="#cb33-13"></a>  <span class="co"># after set to 1 for year rolling year i</span></span>
+<span id="cb33-14"><a href="#cb33-14"></a>  df<span class="sc">$</span>after <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb33-15"><a href="#cb33-15"></a>  df<span class="sc">$</span>after[df<span class="sc">$</span>year <span class="sc">==</span> i] <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
+<span id="cb33-16"><a href="#cb33-16"></a>  </span>
+<span id="cb33-17"><a href="#cb33-17"></a>  <span class="co"># control year</span></span>
+<span id="cb33-18"><a href="#cb33-18"></a>  <span class="cf">if</span>(i <span class="sc">&lt;</span> t){</span>
+<span id="cb33-19"><a href="#cb33-19"></a>    <span class="co"># if i is still before actual treatment, compare to previous year</span></span>
+<span id="cb33-20"><a href="#cb33-20"></a>    tc <span class="ot">&lt;-</span> i <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb33-21"><a href="#cb33-21"></a>  }<span class="cf">else</span>{</span>
+<span id="cb33-22"><a href="#cb33-22"></a>    <span class="co"># if i is beyond actual treatment, compare to year before actual treatment (t-1)</span></span>
+<span id="cb33-23"><a href="#cb33-23"></a>    tc <span class="ot">&lt;-</span> t <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb33-24"><a href="#cb33-24"></a>  }</span>
+<span id="cb33-25"><a href="#cb33-25"></a>  df<span class="sc">$</span>after[df<span class="sc">$</span>year <span class="sc">==</span> tc] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb33-26"><a href="#cb33-26"></a>  </span>
+<span id="cb33-27"><a href="#cb33-27"></a>  <span class="co"># Restrict to the two years we want to compare</span></span>
+<span id="cb33-28"><a href="#cb33-28"></a>  df <span class="ot">&lt;-</span> df[<span class="sc">!</span><span class="fu">is.na</span>(df<span class="sc">$</span>after), ]</span>
+<span id="cb33-29"><a href="#cb33-29"></a>  </span>
+<span id="cb33-30"><a href="#cb33-30"></a>  <span class="co"># Define treated group</span></span>
+<span id="cb33-31"><a href="#cb33-31"></a>  df<span class="sc">$</span>treat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(df<span class="sc">$</span>treat_timing <span class="sc">==</span> t, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb33-32"><a href="#cb33-32"></a>  </span>
+<span id="cb33-33"><a href="#cb33-33"></a>  <span class="co"># Estiamte 2x2 DD</span></span>
+<span id="cb33-34"><a href="#cb33-34"></a>  tmp.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(lnw <span class="sc">~</span> treat<span class="sc">*</span>after, <span class="at">data =</span> df)</span>
+<span id="cb33-35"><a href="#cb33-35"></a>  </span>
+<span id="cb33-36"><a href="#cb33-36"></a>  <span class="co"># Print</span></span>
+<span id="cb33-37"><a href="#cb33-37"></a>  <span class="fu">print</span>(<span class="fu">paste0</span>(i, <span class="st">": "</span>, <span class="fu">round</span>(tmp.lm<span class="sc">$</span>coefficients[<span class="dv">4</span>], <span class="dv">4</span>)))</span>
+<span id="cb33-38"><a href="#cb33-38"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "1980: -0.1289"
+[1] "1981: 0.049"
+[1] "1982: 0.1016"
+[1] "1983: -0.0413"
+[1] "1984: 0.0303"
+[1] "1985: -0.07"
+[1] "1986: -0.1021"
+[1] "1987: -0.0572"
+[1] "1988: -0.0552"
+[1] "1989: -0.1644"
+[1] "1990: -0.131"
+[1] "1991: -0.229"
+[1] "1992: -0.0732"
+[1] "1993: 0.0749"
+[1] "1994: -0.1662"
+[1] "1996: NA"
+[1] "1998: NA"
+[1] "2000: NA"</code></pre>
+</div>
+</div>
+</section>
 <section id="differences-between-estimators" class="slide level2">
 <h2>Differences between estimators</h2>
+<p>Several authors have proposed different dynamic DIf-in-Diff estimators <span class="citation" data-cites="Callaway.2020 DeChaisemartin.2020 Borusyak.2023 Sun.2021 Wooldridge.2021">(<a href="#/references" role="doc-biblioref" onclick="">Callaway and Sant’Anna 2021</a>; <a href="#/references" role="doc-biblioref" onclick="">De Chaisemartin and D’Haultfœuille 2020</a>; <a href="#/references" role="doc-biblioref" onclick="">Borusyak, Jaravel, and Spiess 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Sun and Abraham 2021</a>; <a href="#/references" role="doc-biblioref" onclick="">Wooldridge 2021</a>)</span>. Broadly there are:</p>
 <ul>
 <li><p>Disaggregation based estimators</p></li>
 <li><p>Imputation based estimators</p></li>
@@ -1592,68 +1595,54 @@ Y_{i,t}  =\alpha_{i}+\lambda_{t}+\sum_{e\not\in C}\sum_{\ell\neq-1}\delta_{e,\el
 </section>
 <section id="imputation-based-methods" class="slide level2 smaller">
 <h2>Imputation based methods</h2>
-<p>This comes from <a href="https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html">Golub Capital Social Impact Lab ML Tutorial</a></p>
-<h3 id="horizontal-regression-and-unconfoundedness-literature">Horizontal Regression and Unconfoundedness literature</h3>
-<p>The unconfoundedness literature focuses on the <strong>single-treated-period structure</strong> with a <strong>thin matrix (<span class="math inline">\(N \gg T\)</span>)</strong>, a substantial number of treated and control units, and imputes the missing potential outcomes using control units with similar lagged outcomes. So <span class="math inline">\(Y_{iT}\)</span> is missing for some <span class="math inline">\(i\)</span> (<span class="math inline">\(N_t\)</span> “treated units”) and no missing entries for other units (<span class="math inline">\(N_c = N - N_t\)</span> “control units”):</p>
 <p><span class="math display">\[
 Y_{N\times T}=\left(
-\begin{array}{ccccccc}
-  \checkmark  &amp;  \checkmark  &amp;   \checkmark  \\
-\checkmark  &amp;  \checkmark  &amp;   \checkmark  \\
-\checkmark  &amp;  \checkmark    &amp; {\color{red} ?}  \\
-\checkmark  &amp;  \checkmark     &amp; {\color{red} ?}  \\
-\checkmark  &amp;  \checkmark  &amp;   \checkmark   \\
-\vdots  &amp; \vdots  &amp;\vdots \\
-\checkmark  &amp;  \checkmark    &amp;  {\color{red} ?}  \\
-\end{array}
-\right)\hskip1cm  W_{N\times T}=\left(
-\begin{array}{ccccccc}
-  1  &amp;  1  &amp;   1  \\
-1 &amp;  1    &amp; 1  \\
-1    &amp;  1     &amp; 0  \\
-1  &amp;  1     &amp; 0  \\
-1   &amp;  1     &amp;  1   \\
-\vdots  &amp; \vdots  &amp;\vdots \\
-1    &amp;  1    &amp;  0  \\
+\begin{array}{ccccccr}
+\checkmark &amp; \checkmark &amp; \checkmark &amp; \checkmark  &amp; \dots &amp; \checkmark &amp; {\rm (never\ adopter)}\\
+\checkmark &amp; \checkmark &amp; \checkmark &amp; \checkmark   &amp; \dots &amp; {\color{red} ?}  &amp; {\rm (late\ adopter)}\\
+\checkmark &amp; \checkmark &amp; \checkmark &amp; \checkmark   &amp; \dots &amp; {\color{red} ?}  \\
+\checkmark &amp; \checkmark &amp;{\color{red} ?} &amp; {\color{red} ?}   &amp; \dots &amp; {\color{red} ?}  \\
+\checkmark &amp; \checkmark &amp; {\color{red} ?} &amp; {\color{red} ?}   &amp; \dots &amp; {\color{red} ?} &amp;\ \ \  {\rm (medium\ adopter)} \\
+\vdots   &amp;  \vdots   &amp; \vdots &amp; \vdots &amp;\ddots &amp;\vdots \\
+\checkmark &amp; {\color{red} ?} &amp; {\color{red} ?} &amp; {\color{red} ?} &amp; \dots &amp; {\color{red} ?} &amp; {\rm (early\ adopter)}  \\
 \end{array}
 \right)
 \]</span></p>
-<p>For treated units, the predicted outcome is:</p>
+<p>For more see <a href="https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html">Golub Capital Social Impact Lab ML Tutorial</a> and <span class="citation" data-cites="Athey.2021">Athey et al. (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span>.</p>
+</section>
+<section id="interactive-factor-models" class="slide level2 smaller">
+<h2>Interactive Factor Models</h2>
+<p>Generalized Fixed Effects (Interactive Fixed Effects, Factor Models):</p>
 <p><span class="math display">\[
-\hat Y_{iT}=\hat \beta_0+\sum_{s=1}^{T-1} \hat \beta_s Y_{Nt},
+Y_{it} = \sum_{r=1}^R \gamma_{ir} \delta_{tr} + \epsilon_{it} \quad \text{or} \quad,
+\mathbf{Y} = \mathbf U \mathbf V^\mathrm T + \mathbf{\varepsilon}.
 \]</span></p>
-<p>where</p>
+<ul>
+<li>with with <span class="math inline">\(\mathbf U\)</span> being an <span class="math inline">\(N \times r\)</span> matrix of unknown factor loadings (unit-specific intercepts),</li>
+<li>and <span class="math inline">\(\mathbf V\)</span> an <span class="math inline">\(T \times r\)</span> matrix of unobserved common factors (time-varying coefficients).</li>
+</ul>
+<p>Estimate <span class="math inline">\(\\delta\)</span> and <span class="math inline">\(\\gamma\)</span> by least squares and use to impute missing values.</p>
 <p><span class="math display">\[
-\hat\beta= \arg\min_{\beta} \sum_{i:(i,T)\in \cal{O}}(Y_{iT}-\beta_0-\sum_{s=1}^{T-1}\beta_s Y_{is})^2.
+\hat Y _{NT} = \sum_{r=1}^R \hat \delta_{Nr} \hat \gamma_{rT}.
 \]</span></p>
-<p>A simple version of the unconfoundedness approach is to regress the last period outcome on the lagged outcomes. A more advances version would be matching.</p>
-<h3 id="vertical-regression-and-the-synthetic-control-literature">Vertical Regression and the Synthetic Control literature</h3>
-<p>The <strong>synthetic control</strong> methods focus primarily on <strong>the single-treated-unit block structure</strong> with a relatively fat (<span class="math inline">\(T\gg N\)</span>) or approximately square (<span class="math inline">\(T\approx N\)</span>) matrix. <span class="math inline">\(Y_{Nt}\)</span> is missing for <span class="math inline">\(t \geq T_0\)</span> and there are no missing entries for other units:</p>
+<p>In a matrix form, the <span class="math inline">\(Y_{N \times T}\)</span> can be rewritten as:</p>
 <p><span class="math display">\[
-Y_{N\times T}=\left(
+Y_{N\times T}= \mathbf U \mathbf V^\mathrm T + \epsilon_{N \times T} =  \mathbf L_{N \times T} + \epsilon_{N \times T} = \\ \left(
 \begin{array}{ccccccc}
-\checkmark &amp; \checkmark   &amp; \checkmark  &amp; \dots &amp; \checkmark \\
-\checkmark  &amp; \checkmark &amp; \checkmark   &amp; \dots &amp; \checkmark  \\
-\checkmark  &amp; \checkmark  &amp; {\color{red} ?}  &amp; \dots &amp; {\color{red} ?}  \\
-\end{array}
-\right)\hskip0.5cm
-W_{N\times T}=\left(
+\delta_{11} &amp; \dots &amp; \delta_{R1}  \\
+\vdots &amp; \dots &amp; \vdots   \\
+\vdots &amp; \dots &amp; \vdots   \\
+\vdots &amp; \dots &amp; \vdots   \\
+\delta_{1N} &amp; \dots &amp; \delta_{RN}  \\
+\end{array}\right)
+\left(
 \begin{array}{ccccccc}
-1 &amp; 1 &amp; 1  &amp; \dots &amp; 1 \\
-1  &amp; 1 &amp; 1   &amp; \dots &amp; 1  \\
-1  &amp; 1  &amp; 0  &amp; \dots &amp; 0  \\
+\gamma_{11}  &amp; \dots \dots \dots &amp; \gamma_{1T}  \\
+\vdots &amp; \dots \dots \dots &amp; \vdots   \\
+\gamma_{R1}  &amp; \dots \dots \dots &amp; \gamma_{RT}  \\
 \end{array}
-\right)
+\right) + \epsilon_{N \times T}
 \]</span></p>
-<p>For the treated unit in period <span class="math inline">\(t\)</span>, for <span class="math inline">\(t=T_0, ..., T\)</span>, the predicted outcome is:</p>
-<p><span class="math display">\[
-\hat Y_{Nt}=\hat \omega_0+\sum_{i=1}^{N-1} \hat \omega_i Y_{it}
-\]</span></p>
-<p>where</p>
-<p><span class="math display">\[
-\hat\omega= \arg\min_{\omega} \sum_{t:(N,t)\in \cal{O}}(Y_{Nt}-\omega_0-\sum_{i=1}^{N-1}\omega_i Y_{is})^2.
-\]</span></p>
-<p>See <span class="citation" data-cites="Athey.2021">Athey et al. (<a href="#/references" role="doc-biblioref" onclick="">2021</a>)</span></p>
 </section>
 <section id="borusyak-did-imputation" class="slide level2 smaller scrollable" data-visibility="uncounted">
 <h2>Borusyak DiD imputation</h2>
@@ -1759,9 +1748,9 @@ y_{it} - \hat{y}_{it} =&amp; (\boldsymbol{\mathbf{x}}_{it} - \hat{\boldsymbol{\m
 <section id="example-1" class="slide level2">
 <h2>Example</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-27_7ca4567eee84f15f2b7dc703933f8b12">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">library</span>(feisr)</span>
-<span id="cb34-2"><a href="#cb34-2"></a><span class="fu">data</span>(<span class="st">"mwp"</span>, <span class="at">package =</span> <span class="st">"feisr"</span>)</span>
-<span id="cb34-3"><a href="#cb34-3"></a><span class="fu">head</span>(mwp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a><span class="fu">library</span>(feisr)</span>
+<span id="cb35-2"><a href="#cb35-2"></a><span class="fu">data</span>(<span class="st">"mwp"</span>, <span class="at">package =</span> <span class="st">"feisr"</span>)</span>
+<span id="cb35-3"><a href="#cb35-3"></a><span class="fu">head</span>(mwp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id year      lnw      exp      expq marry evermarry enrol yeduc age cohort
 1  1 1981 1.934358 1.076923  1.159763     0         1     1    11  18   1963
@@ -1783,20 +1772,7 @@ y_{it} - \hat{y}_{it} =&amp; (\boldsymbol{\mathbf{x}}_{it} - \hat{\boldsymbol{\m
 <section id="example-2" class="slide level2">
 <h2>Example</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-28_6041fe9d49ca7ff362a5c059ef502792">
-<div class="sourceCode cell-code" id="cb36" data-code-line-numbers="1-2,5-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>wages.fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
-<span id="cb36-2"><a href="#cb36-2"></a>                <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
-<span id="cb36-3"><a href="#cb36-3"></a>                <span class="at">data =</span> mwp, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb36-4"><a href="#cb36-4"></a>                <span class="at">model =</span> <span class="st">"within"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span>
-<span id="cb36-5"><a href="#cb36-5"></a>wages.re <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
-<span id="cb36-6"><a href="#cb36-6"></a>                <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
-<span id="cb36-7"><a href="#cb36-7"></a>                <span class="at">data =</span> mwp, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
-<span id="cb36-8"><a href="#cb36-8"></a>                <span class="at">model =</span> <span class="st">"random"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="example-3" class="slide level2">
-<h2>Example</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-29_a5567b964fe85d5ee729feb7cb9ad136">
-<div class="sourceCode cell-code" id="cb37" data-code-line-numbers="3-4,7-8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>wages.fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<div class="sourceCode cell-code" id="cb37" data-code-line-numbers="1-2,5-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>wages.fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
 <span id="cb37-2"><a href="#cb37-2"></a>                <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
 <span id="cb37-3"><a href="#cb37-3"></a>                <span class="at">data =</span> mwp, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
 <span id="cb37-4"><a href="#cb37-4"></a>                <span class="at">model =</span> <span class="st">"within"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span>
@@ -1806,22 +1782,23 @@ y_{it} - \hat{y}_{it} =&amp; (\boldsymbol{\mathbf{x}}_{it} - \hat{\boldsymbol{\m
 <span id="cb37-8"><a href="#cb37-8"></a>                <span class="at">model =</span> <span class="st">"random"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="example-3" class="slide level2">
+<h2>Example</h2>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-29_a5567b964fe85d5ee729feb7cb9ad136">
+<div class="sourceCode cell-code" id="cb38" data-code-line-numbers="3-4,7-8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>wages.fe <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<span id="cb38-2"><a href="#cb38-2"></a>                <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb38-3"><a href="#cb38-3"></a>                <span class="at">data =</span> mwp, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb38-4"><a href="#cb38-4"></a>                <span class="at">model =</span> <span class="st">"within"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span>
+<span id="cb38-5"><a href="#cb38-5"></a>wages.re <span class="ot">&lt;-</span> <span class="fu">plm</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<span id="cb38-6"><a href="#cb38-6"></a>                <span class="sc">+</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb38-7"><a href="#cb38-7"></a>                <span class="at">data =</span> mwp, <span class="at">index =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>),</span>
+<span id="cb38-8"><a href="#cb38-8"></a>                <span class="at">model =</span> <span class="st">"random"</span>, <span class="at">effect =</span> <span class="st">"individual"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="cluster-robust-ses" class="slide level2">
 <h2>Cluster robust SEs</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-30_fa346969c9332b8affb193adaa47ffcc">
-<div class="sourceCode cell-code" id="cb38" data-code-line-numbers="2,3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a><span class="co"># Calculate vcov</span></span>
-<span id="cb38-2"><a href="#cb38-2"></a>vcovx_fe <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.fe, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
-<span id="cb38-3"><a href="#cb38-3"></a>vcovx_re <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.re, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
-<span id="cb38-4"><a href="#cb38-4"></a></span>
-<span id="cb38-5"><a href="#cb38-5"></a><span class="co"># Replace original vcov in output</span></span>
-<span id="cb38-6"><a href="#cb38-6"></a>wages.fe<span class="sc">$</span>vcov <span class="ot">&lt;-</span> vcovx_fe</span>
-<span id="cb38-7"><a href="#cb38-7"></a>wages.re<span class="sc">$</span>vcov <span class="ot">&lt;-</span> vcovx_re</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="cluster-robust-ses-1" class="slide level2">
-<h2>Cluster robust SEs</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-31_29fa549d99a842b46e68d4b4a094d46d">
-<div class="sourceCode cell-code" id="cb39" data-code-line-numbers="6,7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="co"># Calculate vcov</span></span>
+<div class="sourceCode cell-code" id="cb39" data-code-line-numbers="2,3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a><span class="co"># Calculate vcov</span></span>
 <span id="cb39-2"><a href="#cb39-2"></a>vcovx_fe <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.fe, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
 <span id="cb39-3"><a href="#cb39-3"></a>vcovx_re <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.re, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
 <span id="cb39-4"><a href="#cb39-4"></a></span>
@@ -1830,34 +1807,46 @@ y_{it} - \hat{y}_{it} =&amp; (\boldsymbol{\mathbf{x}}_{it} - \hat{\boldsymbol{\m
 <span id="cb39-7"><a href="#cb39-7"></a>wages.re<span class="sc">$</span>vcov <span class="ot">&lt;-</span> vcovx_re</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="cluster-robust-ses-1" class="slide level2">
+<h2>Cluster robust SEs</h2>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-31_29fa549d99a842b46e68d4b4a094d46d">
+<div class="sourceCode cell-code" id="cb40" data-code-line-numbers="6,7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="co"># Calculate vcov</span></span>
+<span id="cb40-2"><a href="#cb40-2"></a>vcovx_fe <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.fe, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3"></a>vcovx_re <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(wages.re, <span class="at">cluster =</span> <span class="st">"group"</span>, <span class="at">method =</span> <span class="st">"arellano"</span>, <span class="at">type =</span> <span class="st">"HC3"</span>)</span>
+<span id="cb40-4"><a href="#cb40-4"></a></span>
+<span id="cb40-5"><a href="#cb40-5"></a><span class="co"># Replace original vcov in output</span></span>
+<span id="cb40-6"><a href="#cb40-6"></a>wages.fe<span class="sc">$</span>vcov <span class="ot">&lt;-</span> vcovx_fe</span>
+<span id="cb40-7"><a href="#cb40-7"></a>wages.re<span class="sc">$</span>vcov <span class="ot">&lt;-</span> vcovx_re</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="feis" class="slide level2">
 <h2>FEIS</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-32_0bdaa6f6ed73fccde53dd7e4ce0de105">
-<div class="sourceCode cell-code" id="cb40" data-code-line-numbers="1,2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
-<span id="cb40-2"><a href="#cb40-2"></a>                   <span class="sc">|</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
-<span id="cb40-3"><a href="#cb40-3"></a>                   <span class="at">data =</span> mwp, <span class="at">id =</span> <span class="st">"id"</span>,</span>
-<span id="cb40-4"><a href="#cb40-4"></a>                   <span class="at">robust =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb40-5"><a href="#cb40-5"></a><span class="fu">summary</span>(wages.feis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="feis-1" class="slide level2">
-<h2>FEIS</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-33_e6dd1172310f4d8d7c5aa2d3458b6af2">
-<div class="sourceCode cell-code" id="cb41" data-code-line-numbers="3,4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<div class="sourceCode cell-code" id="cb41" data-code-line-numbers="1,2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
 <span id="cb41-2"><a href="#cb41-2"></a>                   <span class="sc">|</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
 <span id="cb41-3"><a href="#cb41-3"></a>                   <span class="at">data =</span> mwp, <span class="at">id =</span> <span class="st">"id"</span>,</span>
 <span id="cb41-4"><a href="#cb41-4"></a>                   <span class="at">robust =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb41-5"><a href="#cb41-5"></a><span class="fu">summary</span>(wages.feis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="feis-2" class="slide level2">
+<section id="feis-1" class="slide level2">
 <h2>FEIS</h2>
-<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-34_af37ddca5958c7246c798af3d05a7dc1">
-<div class="sourceCode cell-code" id="cb42" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-33_e6dd1172310f4d8d7c5aa2d3458b6af2">
+<div class="sourceCode cell-code" id="cb42" data-code-line-numbers="3,4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
 <span id="cb42-2"><a href="#cb42-2"></a>                   <span class="sc">|</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
 <span id="cb42-3"><a href="#cb42-3"></a>                   <span class="at">data =</span> mwp, <span class="at">id =</span> <span class="st">"id"</span>,</span>
 <span id="cb42-4"><a href="#cb42-4"></a>                   <span class="at">robust =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb42-5"><a href="#cb42-5"></a><span class="fu">summary</span>(wages.feis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="feis-2" class="slide level2">
+<h2>FEIS</h2>
+<div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-34_af37ddca5958c7246c798af3d05a7dc1">
+<div class="sourceCode cell-code" id="cb43" data-code-line-numbers="5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>wages.feis <span class="ot">&lt;-</span> <span class="fu">feis</span>(lnw <span class="sc">~</span> marry <span class="sc">+</span> enrol <span class="sc">+</span> yeduc <span class="sc">+</span> <span class="fu">as.factor</span>(yeargr)</span>
+<span id="cb43-2"><a href="#cb43-2"></a>                   <span class="sc">|</span> exp <span class="sc">+</span> <span class="fu">I</span>(exp<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb43-3"><a href="#cb43-3"></a>                   <span class="at">data =</span> mwp, <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb43-4"><a href="#cb43-4"></a>                   <span class="at">robust =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb43-5"><a href="#cb43-5"></a><span class="fu">summary</span>(wages.feis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 
@@ -1894,8 +1883,8 @@ Adj. R-Squared: 0.022419</code></pre>
 <section id="comparison" class="slide level2">
 <h2>Comparison</h2>
 <div class="cell" data-hash="03_Estimators2_cache/revealjs/unnamed-chunk-35_3b818883b06d9bba178da54bd6b6f2aa">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a><span class="fu">screenreg</span>(<span class="fu">list</span>(wages.re, wages.fe, wages.feis), <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb44-2"><a href="#cb44-2"></a>          <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"RE"</span>, <span class="st">"FE"</span>, <span class="st">"FEIS"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="fu">screenreg</span>(<span class="fu">list</span>(wages.re, wages.fe, wages.feis), <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb45-2"><a href="#cb45-2"></a>          <span class="at">custom.model.names =</span> <span class="fu">c</span>(<span class="st">"RE"</span>, <span class="st">"FE"</span>, <span class="st">"FEIS"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 ============================================================

@@ -143,8 +143,7 @@ mwp$Treat_first <- ave(mwp$Treat_first,
 mwp$time_to_treatment <- mwp$year - mwp$Treat_first
 
 # Define reference periods (use minus 2 to allow for anticipation in -1)
-# control <- c(-2, min(mwp$time_to_treatment)) 
-control <- c(-2)
+control <- c(-2, min(mwp$time_to_treatment)) 
 
 mwp$time_to_treatment <-
   ifelse(
@@ -161,13 +160,12 @@ mwp$time_to_treatment <-
 
 ```{r}
 #| eval: false
-#| code-line-numbers: "4-6"
+#| code-line-numbers: "4-5"
 # Create event time indicator
 mwp$time_to_treatment <- mwp$year - mwp$Treat_first
 
 # Define reference periods (use minus 2 to allow for anticipation in -1)
-# control <- c(-2, min(mwp$time_to_treatment)) 
-control <- c(-2)
+control <- c(-2, min(mwp$time_to_treatment)) 
 
 mwp$time_to_treatment <-
   ifelse(
@@ -184,13 +182,12 @@ mwp$time_to_treatment <-
 
 ```{r}
 #| eval: true
-#| code-line-numbers: "8-15"
+#| code-line-numbers: "7-14"
 # Create event time indicator
 mwp$time_to_treatment <- mwp$year - mwp$Treat_first
 
 # Define reference periods (use minus 2 to allow for anticipation in -1)
-# control <- c(-2, min(mwp$time_to_treatment)) 
-control <- c(-2)
+control <- c(-2, min(mwp$time_to_treatment)) 
 
 mwp$time_to_treatment <-
   ifelse(
@@ -332,6 +329,8 @@ zp <- ggplot(coef.df, aes(x = time, y = att)) +
 
 zp
 
+# save mwp
+mwp_new <- mwp
 ```
 
 
@@ -399,7 +398,7 @@ However, two-way FE may produce biased results when treatment effects are dynami
 
 Several authors have proposed solutions [@Callaway.2020;@DeChaisemartin.2020;@Borusyak.2023;@Sun.2021;@Wooldridge.2021] by using dynamic Difference-in-Differences estimators. 
 
-For a review of these estimators, see, for instance, @Roth.2023 or Ruttenauer.2024.
+For a review of these estimators, see, for instance, @Roth.2023 or @Ruttenauer.2024.
 
 ## Potential solutions
 
@@ -561,7 +560,7 @@ wages.attgt <- att_gt(yname = "lnw",
                       tname = "year",
                       idname = "id",
                       gname = "treat_timing",
-                      xformla = ~ enrol + yeduc + exp + I(exp^2), # note that we omit the yeargroup here
+                      xformla = ~ enrol + yeduc + exp + I(exp^2), 
                       data = mwp,
                       control_group = "notyettreated",
                       anticipation = 0,
@@ -678,7 +677,53 @@ summary(wages.attgt)
 ```
 
 
+
+
 ## Example - Marriage and wage
+
+To make this more interpretable, we re-aggregate the individuals results to a dynamic time-averaged effect (we now restrict this to observations from -3 to 6).
+
+```{r}
+wages.dyn <- aggte(wages.attgt, type = "dynamic", na.rm = TRUE,
+                   min_e = -3, max_e = 6)
+summary(wages.dyn)
+```
+
+
+
+## Example - Marriage and wage
+
+The `did` package also comes with a handy command `ggdid()` to plot the results 
+
+```{r}
+#| eval: false
+zp3 <- ggdid(wages.dyn) 
+  
+zp3 <- zp3 + 
+  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
+  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
+
+zp3
+```
+
+## Example - Marriage and wage
+
+```{r}
+#| eval: true
+#| echo: false
+zp3 <- ggdid(wages.dyn) 
+  
+zp3 <- zp3 + 
+  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
+  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
+
+zp3
+```
+
+
+
+
+## You could do it in a loop
 
 These individual effects are similar to running a lot of individual regressions, where we compute a lot of individual $2 \times 2$ DD estimators, e.g. for group 1981:
 
@@ -725,49 +770,9 @@ for(i in sort(unique(mwp$year))[-1]){
 ```
 
 
-## Example - Marriage and wage
-
-To make this more interpretable, we re-aggregate the individuals results to a dynamic time-averaged effect (we now restrict this to observations from -3 to 6).
-
-```{r}
-wages.dyn <- aggte(wages.attgt, type = "dynamic", na.rm = TRUE,
-                   min_e = -3, max_e = 6)
-summary(wages.dyn)
-```
-
-
-
-## Example - Marriage and wage
-
-The `did` package also comes with a handy command `ggdid()` to plot the results 
-
-```{r}
-#| eval: false
-zp3 <- ggdid(wages.dyn) 
-  
-zp3 <- zp3 + 
-  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
-  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
-
-zp3
-```
-
-## Example - Marriage and wage
-
-```{r}
-#| eval: true
-#| echo: false
-zp3 <- ggdid(wages.dyn) 
-  
-zp3 <- zp3 + 
-  geom_hline(yintercept = 0, colour = gray(1/2), lty = 2) +
-  geom_vline(xintercept = -0.5, colour = "black", lty = 1)
-
-zp3
-```
-
-
 ## Differences between estimators
+
+Several authors have proposed different dynamic DIf-in-Diff estimators [@Callaway.2020;@DeChaisemartin.2020;@Borusyak.2023;@Sun.2021;@Wooldridge.2021]. Broadly there are:
 
 * Disaggregation based estimators
 
@@ -802,86 +807,62 @@ This is similar to a 'parametric' (although very flexible) version of @Callaway.
 
 ## Imputation based methods {.smaller}
 
-This comes from [Golub Capital Social Impact Lab ML Tutorial](https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html)
-
-
-### Horizontal Regression and Unconfoundedness literature
-
-The unconfoundedness literature focuses on the **single-treated-period structure** with a **thin matrix ($N \gg T$)**, a substantial number of treated and control units, and imputes the missing potential outcomes using control units with similar lagged outcomes. So $Y_{iT}$ is missing for some $i$ ($N_t$ "treated units") and no missing entries for other units ($N_c = N - N_t$ "control units"):
 
 $$
 Y_{N\times T}=\left(
-\begin{array}{ccccccc}
-  \checkmark  &  \checkmark  &   \checkmark  \\
-\checkmark  &  \checkmark  &   \checkmark  \\
- \checkmark  &  \checkmark    & {\color{red} ?}  \\
-\checkmark  &  \checkmark     & {\color{red} ?}  \\
- \checkmark  &  \checkmark  &   \checkmark   \\
-\vdots  & \vdots  &\vdots \\
- \checkmark  &  \checkmark    &  {\color{red} ?}  \\
-\end{array}
-\right)\hskip1cm  W_{N\times T}=\left(
-\begin{array}{ccccccc}
-  1  &  1  &   1  \\
-1 &  1    & 1  \\
- 1    &  1     & 0  \\
-1  &  1     & 0  \\
-1   &  1     &  1   \\
-\vdots  & \vdots  &\vdots \\
-1    &  1    &  0  \\
+\begin{array}{ccccccr}
+\checkmark & \checkmark & \checkmark & \checkmark  & \dots & \checkmark & {\rm (never\ adopter)}\\
+\checkmark & \checkmark & \checkmark & \checkmark   & \dots & {\color{red} ?}  & {\rm (late\ adopter)}\\
+\checkmark & \checkmark & \checkmark & \checkmark   & \dots & {\color{red} ?}  \\
+\checkmark & \checkmark &{\color{red} ?} & {\color{red} ?}   & \dots & {\color{red} ?}  \\
+\checkmark & \checkmark & {\color{red} ?} & {\color{red} ?}   & \dots & {\color{red} ?} &\ \ \  {\rm (medium\ adopter)} \\
+\vdots   &  \vdots   & \vdots & \vdots &\ddots &\vdots \\
+\checkmark & {\color{red} ?} & {\color{red} ?} & {\color{red} ?} & \dots & {\color{red} ?} & {\rm (early\ adopter)}  \\
 \end{array}
 \right)
 $$
 
-For treated units, the predicted outcome is:
+For more see [Golub Capital Social Impact Lab ML Tutorial](https://bookdown.org/stanfordgsbsilab/ml-ci-tutorial/matrix-completion-methods.html) and @Athey.2021.
+
+
+## Interactive Factor Models {.smaller}
+
+Generalized Fixed Effects (Interactive Fixed Effects, Factor Models):
 
 $$
-\hat Y_{iT}=\hat \beta_0+\sum_{s=1}^{T-1} \hat \beta_s Y_{Nt}, 
+Y_{it} = \sum_{r=1}^R \gamma_{ir} \delta_{tr} + \epsilon_{it} \quad \text{or} \quad,
+\mathbf{Y} = \mathbf U \mathbf V^\mathrm T + \mathbf{\varepsilon}.
 $$
 
-where
+- with with $\mathbf U$ being an $N \times r$ matrix of unknown factor loadings (unit-specific intercepts),
+- and $\mathbf V$ an $T \times r$  matrix of unobserved common factors (time-varying coefficients).
+
+Estimate $\\delta$ and $\\gamma$ by least squares and use to impute missing values.
 
 $$
-\hat\beta= \arg\min_{\beta} \sum_{i:(i,T)\in \cal{O}}(Y_{iT}-\beta_0-\sum_{s=1}^{T-1}\beta_s Y_{is})^2.
+\hat Y _{NT} = \sum_{r=1}^R \hat \delta_{Nr} \hat \gamma_{rT}.
 $$
 
-A simple version of the unconfoundedness approach is to regress the last period outcome on the lagged outcomes. A more advances version would be matching.
-
-### Vertical Regression and the Synthetic Control literature
-
-The **synthetic control** methods  focus primarily on **the single-treated-unit block structure** with a relatively fat ($T\gg N$) or approximately square ($T\approx N$) matrix. $Y_{Nt}$ is missing for $t \geq T_0$ and there are no missing entries for other units:
+In a matrix form, the $Y_{N \times T}$ can be rewritten as:
 
 $$
-Y_{N\times T}=\left(
+Y_{N\times T}= \mathbf U \mathbf V^\mathrm T + \epsilon_{N \times T} =  \mathbf L_{N \times T} + \epsilon_{N \times T} = \\ \left(
 \begin{array}{ccccccc}
- \checkmark & \checkmark   & \checkmark  & \dots & \checkmark \\
-\checkmark  & \checkmark & \checkmark   & \dots & \checkmark  \\
-\checkmark  & \checkmark  & {\color{red} ?}  & \dots & {\color{red} ?}  \\
-\end{array}
-\right)\hskip0.5cm 
-W_{N\times T}=\left(
+ \delta_{11} & \dots & \delta_{R1}  \\
+\vdots & \dots & \vdots   \\
+\vdots & \dots & \vdots   \\
+\vdots & \dots & \vdots   \\
+\delta_{1N} & \dots & \delta_{RN}  \\
+\end{array}\right)
+\left(
 \begin{array}{ccccccc}
-1 & 1 & 1  & \dots & 1 \\
-1  & 1 & 1   & \dots & 1  \\
-1  & 1  & 0  & \dots & 0  \\
+\gamma_{11}  & \dots \dots \dots & \gamma_{1T}  \\
+\vdots & \dots \dots \dots & \vdots   \\
+\gamma_{R1}  & \dots \dots \dots & \gamma_{RT}  \\
 \end{array}
-\right)
+\right) + \epsilon_{N \times T}
 $$
 
-
-For the treated unit in period $t$, for $t=T_0, ..., T$, the predicted outcome is: 
-
-$$
-\hat Y_{Nt}=\hat \omega_0+\sum_{i=1}^{N-1} \hat \omega_i Y_{it}
-$$
-
-where
-
-$$
-\hat\omega= \arg\min_{\omega} \sum_{t:(N,t)\in \cal{O}}(Y_{Nt}-\omega_0-\sum_{i=1}^{N-1}\omega_i Y_{is})^2.
-$$
-
-See @Athey.2021
 
 ## Borusyak DiD imputation {visibility="uncounted"  .smaller .scrollable}
 
@@ -1130,6 +1111,10 @@ summary(wages.feis)
 screenreg(list(wages.re, wages.fe, wages.feis), digits = 3,
           custom.model.names = c("RE", "FE", "FEIS"))
 ```
+
+
+
+
 
 
 ## Interpretation {.smaller}
